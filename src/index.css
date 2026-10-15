@@ -1,0 +1,357 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-ocean-navy: #0a1628;
+  --color-ocean-dark: #050d18;
+  --color-ocean-blue: #00b4ff;
+  --color-ocean-cyan: #00e5ff;
+  --color-ocean-teal: #00c9a7;
+  --color-ocean-purple: #7b5cff;
+  --color-ocean-magenta: #e040fb;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #050d18;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a1628;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e3a5f;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00b4ff;
+}
+
+/* Mosaic tile animation */
+@keyframes tilePulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    filter: brightness(0.85);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes progressGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 8px rgba(0, 180, 255, 0.4),
+      0 0 16px rgba(123, 92, 255, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(0, 229, 255, 0.6),
+      0 0 28px rgba(224, 64, 251, 0.3);
+  }
+}
+
+@keyframes logoGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 30px rgba(0, 180, 255, 0.35),
+      0 0 60px rgba(0, 180, 255, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 45px rgba(0, 229, 255, 0.5),
+      0 0 90px rgba(0, 180, 255, 0.25);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.9s ease-out forwards;
+}
+
+.animate-logo-glow {
+  animation: logoGlow 3s ease-in-out infinite;
+}
+
+.animate-progress-glow {
+  animation: progressGlow 2s ease-in-out infinite;
+}
+
+.tile-animate {
+  animation: tilePulse 4s ease-in-out infinite;
+}
+
+/* Gradient progress bar */
+.progress-gradient {
+  background: linear-gradient(
+    90deg,
+    #00e5ff 0%,
+    #00b4ff 20%,
+    #7b5cff 40%,
+    #e040fb 60%,
+    #ff6b35 80%,
+    #ffd700 100%
+  );
+  background-size: 200% 100%;
+  animation: gradientShift 2s linear infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.led-tile-bg {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+.led-tile-bg::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background-image: linear-gradient(145deg, #00a8b8 0%, #006878 100%);
+  background-size: 58px 58px;
+  /* Creates the rounded tile look with gaps */
+  -webkit-mask-image:
+    repeating-linear-gradient(0deg, #000 0 48px, transparent 48px 58px),
+    repeating-linear-gradient(90deg, #000 0 48px, transparent 48px 58px);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    repeating-linear-gradient(0deg, #000 0 48px, transparent 48px 58px),
+    repeating-linear-gradient(90deg, #000 0 48px, transparent 48px 58px);
+  mask-composite: intersect;
+  opacity: 0.7;
+}
+
+.led-tile-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 20%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  pointer-events: none;
+}
+
+/* ===== Scroll reveal ===== */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal-up {
+  transform: translateY(40px);
+}
+.reveal-down {
+  transform: translateY(-40px);
+}
+.reveal-left {
+  transform: translateX(-60px);
+}
+.reveal-right {
+  transform: translateX(60px);
+}
+.reveal-scale {
+  transform: scale(0.9);
+}
+.reveal.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===== Hero entrance ===== */
+.hero-item {
+  opacity: 0;
+  animation: fadeInUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ===== Gradient text shimmer ===== */
+@keyframes textShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+.text-shimmer {
+  background-size: 200% auto;
+  animation: textShimmer 4s linear infinite;
+}
+
+/* ===== Floating / glow blobs ===== */
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+.animate-float {
+  animation: floatY 5s ease-in-out infinite;
+}
+
+@keyframes blobDrift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -20px) scale(1.1);
+  }
+}
+.animate-blob {
+  animation: blobDrift 12s ease-in-out infinite;
+}
+
+/* ===== Bouncing scroll cue ===== */
+@keyframes scrollCue {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.scroll-cue-dot {
+  animation: scrollCue 1.8s ease-in-out infinite;
+}
+
+/* ===== Button shine sweep ===== */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: skewX(-20deg);
+}
+.btn-shine:hover::after {
+  animation: shine 0.8s ease;
+}
+@keyframes shine {
+  to {
+    left: 130%;
+  }
+}
+
+/* ===== Card hover lift ===== */
+.card-lift {
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease,
+    border-color 0.3s,
+    background-color 0.3s;
+}
+.card-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0, 180, 255, 0.12);
+}
+
+/* ===== Process line draw ===== */
+@keyframes drawLine {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.line-draw {
+  transform-origin: left;
+  animation: drawLine 1.4s ease-out 0.3s both;
+}
+
+/* Respect reduced motion for reveals */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-item {
+    opacity: 1;
+    animation: none;
+  }
+}
