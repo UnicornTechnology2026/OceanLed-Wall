@@ -1,13 +1,16 @@
-import type { MouseEvent } from 'react';
-import OceanLedLogo from './OceanLedLogo';
-import { useSiteSettings } from '../context/SiteSettingsContext';
+import { pageHref } from "../router";
+import type { Page } from "../router";
+import OceanLedLogo from "./OceanLedLogo";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 
-const FOOTER_LINKS = [
-  { label: 'Home', href: '#home' },
-  { label: 'Solutions', href: '#solutions' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+const FOOTER_LINKS: { label: string; page: Page }[] = [
+  { label: "Home", page: "home" },
+  { label: "Solutions", page: "solutions" },
+  { label: "Process", page: "process" },
+  { label: "Projects", page: "projects" },
+  { label: "About", page: "about" },
+  { label: "FAQ", page: "faq" },
+  { label: "Contact", page: "contact" },
 ];
 
 export default function Footer() {
@@ -15,17 +18,13 @@ export default function Footer() {
   const { settings } = useSiteSettings();
   const { email, phone, address } = settings.contact;
 
-  const handleClick = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <footer className="relative border-t border-white/6 bg-ocean-dark overflow-hidden">
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-px"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(0,180,255,0.3), transparent)',
+          background:
+            "linear-gradient(90deg, transparent, rgba(0,180,255,0.3), transparent)",
         }}
       />
 
@@ -35,10 +34,13 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-5">
               <OceanLedLogo size={36} />
-              <span className="text-lg font-bold tracking-wide text-white">OCEAN LED</span>
+              <span className="text-lg font-bold tracking-wide text-white">
+                OCEAN LED
+              </span>
             </div>
             <p className="text-sm text-white/40 leading-relaxed max-w-xs">
-              Premium LED display solutions for spaces that demand visual excellence.
+              Premium LED display solutions for spaces that demand visual
+              excellence.
             </p>
           </div>
 
@@ -51,8 +53,7 @@ export default function Footer() {
               {FOOTER_LINKS.map((link) => (
                 <li key={link.label}>
                   <a
-                    href={link.href}
-                    onClick={(e) => handleClick(e, link.href)}
+                    href={pageHref(link.page)}
                     className="text-sm text-white/40 hover:text-ocean-cyan transition-colors duration-200"
                   >
                     {link.label}
