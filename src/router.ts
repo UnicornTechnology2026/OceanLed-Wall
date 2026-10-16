@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 export const PAGES = [
   "home",
-  "solutions",
   "process",
   "projects",
   "about",

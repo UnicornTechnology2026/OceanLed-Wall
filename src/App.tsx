@@ -9,7 +9,6 @@ import {
 import Loader from "./components/Loader";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import Solutions from "./components/Solutions";
 import WhyOceanLed from "./components/WhyOceanLed";
 import Projects from "./components/Projects";
 import About from "./components/About";
@@ -41,7 +40,6 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
       <PanIndiaDelivery />
     </>
   ),
-  solutions: <Solutions />,
   process: <Process />,
   projects: <Projects />,
   about: (

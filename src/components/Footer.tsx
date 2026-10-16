@@ -5,7 +5,6 @@ import { useSiteSettings } from "../context/SiteSettingsContext";
 
 const FOOTER_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
-  { label: "Solutions", page: "solutions" },
   { label: "Process", page: "process" },
   { label: "Projects", page: "projects" },
   { label: "About", page: "about" },

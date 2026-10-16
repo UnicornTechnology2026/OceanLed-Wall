@@ -6,7 +6,6 @@ import type { Page } from "../router";
 
 const NAV_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
-  { label: "Solutions", page: "solutions" },
   { label: "Process", page: "process" },
   { label: "Projects", page: "projects" },
   { label: "About Us", page: "about" },
