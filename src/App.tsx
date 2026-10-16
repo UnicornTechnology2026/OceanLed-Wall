@@ -23,6 +23,8 @@ import OfficeMap from "./components/OfficeMap";
 import ScrollProduct from "./components/ScrollProduct";
 import ScrollProgress from "./components/ScrollProgress";
 import SolutionFinder from "./components/SolutionFinder";
+import PortfolioPortal from "./components/PortfolioPortal";
+import PanIndiaDelivery from "./components/PanIndiaDelivery";
 
 const LedConfigurator = lazy(() => import("./components/LedConfigurator"));
 
@@ -32,9 +34,11 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
       <Hero />
       <ScrollProduct />
       <SolutionFinder />
+      <PortfolioPortal />
       <Suspense fallback={<div className="h-96 bg-ocean-dark" />}>
         <LedConfigurator />
       </Suspense>
+      <PanIndiaDelivery />
     </>
   ),
   solutions: <Solutions />,
