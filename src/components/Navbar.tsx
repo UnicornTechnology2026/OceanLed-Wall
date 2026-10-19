@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import type { MouseEvent } from "react";
+import { Menu, X, ChevronRight, Lock } from "lucide-react";
 import OceanLedLogo from "./OceanLedLogo";
-import { usePage, pageHref } from "../router";
+import { usePage, pageHref, navigate } from "../router";
 import type { Page } from "../router";
 
 const NAV_LINKS: { label: string; page: Page }[] = [
@@ -20,105 +21,175 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // close the mobile menu whenever the page changes
+  useEffect(() => {
+    setOpen(false);
+  }, [page]);
+
+  const goContact = (e: MouseEvent) => {
+    e.preventDefault();
+    setOpen(false);
+    navigate("contact");
+  };
+
+  const solid = scrolled || page !== "home" || open;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || page !== "home"
-          ? "bg-ocean-dark/90 backdrop-blur-md border-b border-white/5 shadow-lg"
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
+        solid
+          ? "border-b border-white/10 bg-ocean-dark/90 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur-md"
           : "bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-16 md:h-20">
-        {/* Logo + Name */}
-        <a href={pageHref("home")} className="flex items-center gap-3 group">
+      {/* cyan hairline under the bar once it turns solid */}
+      <div
+        className={`pointer-events-none absolute inset-x-0 bottom-0 mx-auto h-px max-w-3xl bg-linear-to-r from-transparent via-ocean-cyan/50 to-transparent transition-opacity duration-300 ${
+          solid ? "opacity-100" : "opacity-0"
+        }`}
+      />
+
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 md:h-20 lg:px-8">
+        {/* Logo + name */}
+        <a
+          href={pageHref("home")}
+          className="group flex shrink-0 items-center gap-3"
+        >
           <OceanLedLogo size={40} className="shadow-none!" />
-          <span className="text-lg font-bold tracking-wide text-white group-hover:text-ocean-cyan transition-colors">
+          <span className="text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
             OCEAN LED
           </span>
         </a>
 
         {/* Desktop links */}
-        <ul className="hidden lg:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <li key={link.label}>
-              <a
-                href={pageHref(link.page)}
-                className={`text-sm font-medium transition-colors hover:text-ocean-cyan ${
-                  page === link.page ? "text-ocean-cyan" : "text-white/80"
-                }`}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+        <ul className="hidden items-center gap-1 lg:flex">
+          {NAV_LINKS.map((link) => {
+            const active = page === link.page;
+            return (
+              <li key={link.label}>
+                <a
+                  href={pageHref(link.page)}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium uppercase tracking-wider transition ${
+                    active
+                      ? "border-ocean-cyan/30 bg-ocean-cyan/6 text-ocean-cyan"
+                      : "border-transparent text-white/70 hover:text-ocean-cyan"
+                  }`}
+                >
+                  {active && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-ocean-cyan shadow-[0_0_8px_rgba(0,229,255,0.9)]" />
+                  )}
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
 
+        {/* Desktop CTA + admin */}
+        <div className="hidden shrink-0 items-center gap-3 lg:flex">
           {onOpenAdmin && (
             <button
               type="button"
               onClick={onOpenAdmin}
-              className="text-xs text-white/30 hover:text-ocean-cyan transition-colors"
+              aria-label="Admin"
+              title="Admin"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/35 transition hover:border-ocean-cyan/40 hover:text-ocean-cyan"
             >
-              Admin
+              <Lock size={14} />
             </button>
           )}
-        </ul>
-
-        {/* CTA */}
-        <div className="hidden lg:block">
           <a
             href={pageHref("contact")}
-            className="inline-flex items-center rounded-full bg-linear-to-r from-ocean-blue to-ocean-cyan px-5 py-2.5 text-sm font-semibold text-ocean-dark shadow-lg shadow-ocean-blue/25 hover:shadow-ocean-cyan/40 hover:scale-[1.02] transition-all"
+            onClick={goContact}
+            className="inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-5 py-3 text-xs font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
           >
             Get a Quote
+            <span className="h-1.5 w-1.5 rounded-full bg-black" />
           </a>
         </div>
 
         {/* Mobile hamburger */}
         <button
           type="button"
-          className="lg:hidden p-2 text-white hover:text-ocean-cyan transition-colors"
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan transition hover:border-ocean-cyan lg:hidden"
         >
-          {open ? <X size={24} /> : <Menu size={24} />}
+          {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </nav>
 
       {/* Mobile menu */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`grid transition-all duration-300 ease-in-out lg:hidden ${
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >
-        <div className="bg-ocean-dark/95 backdrop-blur-md border-t border-white/5 px-4 pb-6 pt-2">
-          <ul className="flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={pageHref(link.page)}
-                  onClick={() => setOpen(false)}
-                  className={`block py-3 text-base font-medium transition-colors hover:text-ocean-cyan ${
-                    page === link.page ? "text-ocean-cyan" : "text-white/90"
-                  }`}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-            <li className="pt-3">
-              <a
-                href={pageHref("contact")}
-                onClick={() => setOpen(false)}
-                className="block w-full text-center rounded-full bg-linear-to-r from-ocean-blue to-ocean-cyan px-5 py-3 text-sm font-semibold text-ocean-dark"
+        <div className="overflow-hidden">
+          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto px-4 pb-5 pt-2 sm:px-6">
+            <div className="rounded-2xl border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-2.5">
+              {NAV_LINKS.map((link, i) => {
+                const active = page === link.page;
+                return (
+                  <a
+                    key={link.label}
+                    href={pageHref(link.page)}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex items-center gap-3 rounded-xl border p-2.5 transition ${
+                      active
+                        ? "border-ocean-cyan/35 bg-ocean-cyan/5 text-white"
+                        : "border-transparent text-white/75 hover:bg-white/4"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold ${
+                        active
+                          ? "border-ocean-cyan bg-ocean-cyan text-black"
+                          : "border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan"
+                      }`}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="flex-1 text-sm font-semibold uppercase tracking-wider">
+                      {link.label}
+                    </span>
+                    <ChevronRight size={16} className="text-ocean-cyan" />
+                  </a>
+                );
+              })}
+            </div>
+
+            <a
+              href={pageHref("contact")}
+              onClick={goContact}
+              className="mt-3 flex w-full items-center justify-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)]"
+            >
+              Get a Quote
+              <span className="h-1.5 w-1.5 rounded-full bg-black" />
+            </a>
+
+            {onOpenAdmin && (
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  onOpenAdmin();
+                }}
+                className="mx-auto mt-4 flex items-center gap-2 text-xs uppercase tracking-wider text-white/30 transition hover:text-ocean-cyan"
               >
-                Get a Quote
-              </a>
-            </li>
-          </ul>
+                <Lock size={12} />
+                Admin
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </header>

@@ -49,7 +49,7 @@ export default function Process() {
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <div>
           <Reveal>
-            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
+            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
               <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
               How We Work // 4 Simple Steps
             </span>
@@ -58,7 +58,7 @@ export default function Process() {
           <Reveal delay={100}>
             <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               From idea to illumination
-              <span className="block bg-gradient-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+              <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 in four clear steps.
               </span>
             </h2>
@@ -86,17 +86,17 @@ export default function Process() {
 
         {/* ───────── SECTION 2 : STEPS CARD ───────── */}
         <Reveal direction="right" delay={100}>
-          <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-b from-[#0a1220] to-[#060b14] p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] sm:p-8">
+          <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] sm:p-8">
             {/* cyan top edge highlight */}
-            <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-ocean-cyan/70 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
 
             <ol className="relative space-y-4">
               {/* vertical connecting line */}
-              <div className="pointer-events-none absolute bottom-8 left-[27px] top-8 w-px bg-gradient-to-b from-ocean-cyan/50 via-ocean-cyan/20 to-transparent" />
+              <div className="pointer-events-none absolute bottom-8 left-6.75 top-8 w-px bg-linear-to-b from-ocean-cyan/50 via-ocean-cyan/20 to-transparent" />
 
               {STEPS.map((step, i) => (
                 <Reveal key={step.title} delay={i * 120}>
-                  <li className="group relative flex items-start gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition hover:-translate-y-0.5 hover:border-ocean-cyan/40 hover:bg-ocean-cyan/[0.04] sm:p-5">
+                  <li className="group relative flex items-start gap-4 rounded-xl border border-white/10 bg-white/3 p-4 transition hover:-translate-y-0.5 hover:border-ocean-cyan/40 hover:bg-ocean-cyan/4 sm:p-5">
                     <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan">
                       <step.icon size={24} strokeWidth={1.75} />
                       <span className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-ocean-cyan text-xs font-bold text-black">

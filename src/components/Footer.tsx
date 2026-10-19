@@ -1,13 +1,16 @@
-import { pageHref } from "../router";
+import type { MouseEvent } from "react";
+import { ArrowUp, Mail, Phone, MapPin, ChevronRight } from "lucide-react";
+import { navigate, pageHref } from "../router";
 import type { Page } from "../router";
 import OceanLedLogo from "./OceanLedLogo";
+import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 
 const FOOTER_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
   { label: "Process", page: "process" },
   { label: "Projects", page: "projects" },
-  { label: "About", page: "about" },
+  { label: "About Us", page: "about" },
   { label: "FAQ", page: "faq" },
   { label: "Contact", page: "contact" },
 ];
@@ -17,71 +20,176 @@ export default function Footer() {
   const { settings } = useSiteSettings();
   const { email, phone, address } = settings.contact;
 
-  return (
-    <footer className="relative border-t border-white/6 bg-ocean-dark overflow-hidden">
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(0,180,255,0.3), transparent)",
-        }}
-      />
+  const goContact = (e: MouseEvent) => {
+    e.preventDefault();
+    navigate("contact");
+  };
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <OceanLedLogo size={36} />
-              <span className="text-lg font-bold tracking-wide text-white">
-                OCEAN LED
-              </span>
+  const INFO = [
+    { icon: Mail, label: "Email", value: email, href: `mailto:${email}` },
+    {
+      icon: Phone,
+      label: "Phone",
+      value: phone,
+      href: `tel:${phone.replace(/\s/g, "")}`,
+    },
+    { icon: MapPin, label: "Office", value: address, href: undefined },
+  ];
+
+  return (
+    <footer className="relative overflow-hidden border-t border-white/10 bg-ocean-dark">
+      {/* soft cyan glow, same style as the other sections */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_15%_0%,rgba(0,229,255,0.08),transparent_55%)]" />
+      <div className="pointer-events-none absolute -right-40 top-10 h-96 w-96 rounded-full bg-ocean-cyan/10 blur-[140px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px max-w-2xl bg-linear-to-r from-transparent via-ocean-cyan/60 to-transparent" />
+
+      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+        {/* ───────── CTA BANNER ───────── */}
+        <Reveal>
+          <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] sm:p-10">
+            <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
+
+            <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+              <div>
+                <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
+                  <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
+                  Let's Talk // Free Quote
+                </span>
+                <h2 className="mt-4 text-2xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl">
+                  Ready to light up
+                  <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+                    your space?
+                  </span>
+                </h2>
+              </div>
+
+              <a
+                href={pageHref("contact")}
+                onClick={goContact}
+                className="inline-flex shrink-0 items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)] sm:px-8 sm:py-4"
+              >
+                Get a Free Quote
+                <span className="h-1.5 w-1.5 rounded-full bg-black" />
+              </a>
             </div>
-            <p className="text-sm text-white/40 leading-relaxed max-w-xs">
-              Premium LED display solutions for spaces that demand visual
-              excellence.
-            </p>
           </div>
+        </Reveal>
+
+        {/* ───────── LINK COLUMNS ───────── */}
+        <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-[1.3fr_0.7fr_1.2fr] lg:gap-14">
+          {/* Brand */}
+          <Reveal>
+            <div>
+              <a
+                href={pageHref("home")}
+                className="group inline-flex items-center gap-3"
+              >
+                <OceanLedLogo size={44} className="shadow-none!" />
+                <span className="text-xl font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
+                  OCEAN LED
+                </span>
+              </a>
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/55">
+                Premium LED display solutions for spaces that demand visual
+                excellence. Indoor and outdoor screens, video walls and digital
+                signage, delivered across India.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2.5">
+                {["Pan-India Service", "2-Year Warranty", "24/7 Support"].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-white/10 bg-white/3 px-3.5 py-1.5 text-[11px] font-medium text-white/60"
+                    >
+                      {tag}
+                    </span>
+                  ),
+                )}
+              </div>
+            </div>
+          </Reveal>
 
           {/* Navigation */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/50 mb-5">
-              Navigate
-            </h4>
-            <ul className="space-y-2.5">
-              {FOOTER_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={pageHref(link.page)}
-                    className="text-sm text-white/40 hover:text-ocean-cyan transition-colors duration-200"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Reveal delay={100}>
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-ocean-cyan">
+                Navigate
+              </h4>
+              <ul className="mt-5 space-y-3">
+                {FOOTER_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={pageHref(link.page)}
+                      className="group inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-white/60 transition-colors hover:text-ocean-cyan"
+                    >
+                      <ChevronRight
+                        size={14}
+                        className="-ml-1 text-ocean-cyan/0 transition-all group-hover:ml-0 group-hover:text-ocean-cyan"
+                      />
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
 
           {/* Contact */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/50 mb-5">
-              Contact
-            </h4>
-            <ul className="space-y-2.5 text-sm text-white/40">
-              <li>{email}</li>
-              <li>{phone}</li>
-              <li>{address}</li>
-            </ul>
-          </div>
+          <Reveal delay={200} className="md:col-span-2 lg:col-span-1">
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-ocean-cyan">
+                Contact
+              </h4>
+              <div className="mt-5 space-y-3">
+                {INFO.map((item) => {
+                  const content = (
+                    <>
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan">
+                        <item.icon size={18} strokeWidth={1.75} />
+                      </span>
+                      <span className="block min-w-0">
+                        <span className="block text-[11px] font-medium uppercase tracking-wider text-white/40">
+                          {item.label}
+                        </span>
+                        <span className="mt-0.5 block wrap-break-word text-sm font-semibold text-white/75">
+                          {item.value}
+                        </span>
+                      </span>
+                    </>
+                  );
+                  const cls =
+                    "flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:-translate-y-0.5 hover:border-ocean-cyan/40 hover:bg-ocean-cyan/[0.04]";
+                  return item.href ? (
+                    <a key={item.label} href={item.href} className={cls}>
+                      {content}
+                    </a>
+                  ) : (
+                    <div key={item.label} className={cls}>
+                      {content}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Reveal>
         </div>
 
-        <div className="mt-14 pt-8 border-t border-white/6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/30">
+        {/* ───────── BOTTOM BAR ───────── */}
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
+          <p className="text-xs text-white/40">
             © {year} OCEAN LED. All rights reserved.
           </p>
-          <p className="text-xs text-white/25 tracking-wide">
+          <p className="text-[11px] uppercase tracking-wider text-white/30">
             LED Displays · Video Walls · Digital Signage
           </p>
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Back to top"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan transition hover:-translate-y-0.5 hover:border-ocean-cyan hover:bg-ocean-cyan hover:text-black"
+          >
+            <ArrowUp size={16} strokeWidth={2.5} />
+          </button>
         </div>
       </div>
     </footer>
