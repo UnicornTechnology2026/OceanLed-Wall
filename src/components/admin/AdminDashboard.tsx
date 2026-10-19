@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState } from "react";
+import type { ReactNode } from "react";
 import {
   LogOut,
   Save,
@@ -13,15 +14,39 @@ import {
   Inbox,
   Trash2,
   Eye,
-} from 'lucide-react';
-import { useSiteSettings } from '../../context/SiteSettingsContext';
+  ChevronRight,
+} from "lucide-react";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import type {
   ContactSettings,
   AboutSettings,
   Project,
-} from '../../context/SiteSettingsContext';
-import OceanLedLogo from '../OceanLedLogo';
-import ImageUpload from './ImageUpload';
+} from "../../context/SiteSettingsContext";
+import OceanLedLogo from "../OceanLedLogo";
+import ImageUpload from "./ImageUpload";
+
+const inputCls =
+  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-ocean-cyan/50 focus:bg-ocean-cyan/[0.03] focus:ring-2 focus:ring-ocean-cyan/30";
+const labelCls =
+  "mb-1.5 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-white/50";
+
+/* dark card with the cyan top edge, same as every other page */
+function Card({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-5 shadow-[0_0_80px_rgba(0,0,0,0.5)] sm:p-7 ${className}`}
+    >
+      <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
+      {children}
+    </div>
+  );
+}
 
 export default function AdminDashboard({ onBack }: { onBack: () => void }) {
   const {
@@ -37,13 +62,15 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
     clearInquiries,
   } = useSiteSettings();
 
-  const [contact, setContact] = useState<ContactSettings>({ ...settings.contact });
+  const [contact, setContact] = useState<ContactSettings>({
+    ...settings.contact,
+  });
   const [about, setAbout] = useState<AboutSettings>({ ...settings.about });
   const [projects, setProjects] = useState<Project[]>(
-    settings.projects.map((p) => ({ ...p }))
+    settings.projects.map((p) => ({ ...p })),
   );
   const [saved, setSaved] = useState(false);
-  const [tab, setTab] = useState('inquiries');
+  const [tab, setTab] = useState("inquiries");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const unreadCount = inquiries.filter((i) => !i.read).length;
@@ -57,13 +84,17 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
   };
 
   const handleReset = () => {
-    if (window.confirm('Reset all settings to defaults?')) {
+    if (window.confirm("Reset all settings to defaults?")) {
       resetSettings();
       setTimeout(() => window.location.reload(), 100);
     }
   };
 
-  const updateProjectField = (index: number, field: keyof Project, value: string) => {
+  const updateProjectField = (
+    index: number,
+    field: keyof Project,
+    value: string,
+  ) => {
     setProjects((prev) => {
       const next = [...prev];
       next[index] = { ...next[index], [field]: value };
@@ -80,12 +111,12 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
 
   const formatDate = (iso: string) => {
     try {
-      return new Date(iso).toLocaleString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+      return new Date(iso).toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch {
       return iso;
@@ -93,355 +124,583 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
   };
 
   const tabs = [
-    { id: 'inquiries', label: 'Inquiries', icon: Inbox, badge: unreadCount },
-    { id: 'contact', label: 'Contact Info', icon: Mail },
-    { id: 'about', label: 'About & Stats', icon: Hash },
-    { id: 'projects', label: 'Project Images', icon: ImageIcon },
+    {
+      id: "inquiries",
+      label: "Inquiries",
+      icon: Inbox,
+      badge: unreadCount,
+      title: "Form submissions",
+      sub: "Messages sent through the contact form.",
+    },
+    {
+      id: "contact",
+      label: "Contact Info",
+      icon: Mail,
+      title: "Contact information",
+      sub: "Shown in the Contact section, map and Footer.",
+    },
+    {
+      id: "about",
+      label: "About & Stats",
+      icon: Hash,
+      title: "About and stats",
+      sub: "Image and numbers used on the About, Hero and Projects pages.",
+    },
+    {
+      id: "projects",
+      label: "Project Images",
+      icon: ImageIcon,
+      title: "Project images",
+      sub: "Update the title, category, location and image of each project card.",
+    },
   ];
 
+  const current = tabs.find((t) => t.id === tab) ?? tabs[0];
+
+  const changeTab = (id: string) => {
+    setTab(id);
+    setSelectedId(null);
+  };
+
   return (
-    <div className="min-h-screen bg-ocean-dark text-white">
-      <header className="sticky top-0 z-50 border-b border-white/6 bg-ocean-dark/90 backdrop-blur-md">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <OceanLedLogo size={32} />
-            <span className="font-bold tracking-wide">Admin Panel</span>
+    <div className="relative min-h-screen bg-ocean-dark text-white">
+      {/* soft cyan glow, same style as the site */}
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_15%_10%,rgba(0,229,255,0.07),transparent_55%)]" />
+      <div className="pointer-events-none fixed -right-40 top-1/3 h-96 w-96 rounded-full bg-ocean-cyan/10 blur-[140px]" />
+
+      {/* ───────── SIDEBAR (desktop) ───────── */}
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-white/10 bg-ocean-dark/95 p-5 backdrop-blur-md lg:flex">
+        <div className="flex items-center gap-3 px-2 pt-1">
+          <OceanLedLogo size={40} className="shadow-none!" />
+          <div>
+            <p className="text-base font-extrabold uppercase leading-none tracking-wide text-white">
+              OCEAN LED
+            </p>
+            <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ocean-cyan">
+              Admin Panel
+            </p>
           </div>
+        </div>
+
+        <nav className="mt-8 flex-1 space-y-2">
+          {tabs.map((t, i) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => changeTab(t.id)}
+                aria-current={active ? "page" : undefined}
+                className={`flex w-full items-center gap-3 rounded-xl border p-2.5 text-left transition ${
+                  active
+                    ? "border-ocean-cyan/35 bg-ocean-cyan/5"
+                    : "border-transparent hover:bg-white/4"
+                }`}
+              >
+                <span
+                  className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${
+                    active
+                      ? "border-ocean-cyan bg-ocean-cyan text-black"
+                      : "border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan"
+                  }`}
+                >
+                  <t.icon size={18} strokeWidth={1.75} />
+                </span>
+                <span className="block min-w-0 flex-1">
+                  <span className="block text-[10px] font-medium uppercase tracking-wider text-white/35">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={`block text-sm font-semibold uppercase tracking-wide ${
+                      active ? "text-white" : "text-white/70"
+                    }`}
+                  >
+                    {t.label}
+                  </span>
+                </span>
+                {(t.badge ?? 0) > 0 && (
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ocean-cyan px-1.5 text-[10px] font-bold text-black">
+                    {t.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="space-y-2 border-t border-white/10 pt-4">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white/70 transition hover:border-ocean-cyan/40 hover:text-ocean-cyan"
+          >
+            <ArrowLeft size={15} />
+            View Site
+          </button>
+          <button
+            type="button"
+            onClick={logout}
+            className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-white/50 transition hover:border-red-400/40 hover:text-red-400"
+          >
+            <LogOut size={15} />
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* ───────── TOP BAR (mobile / tablet) ───────── */}
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-ocean-dark/90 backdrop-blur-md lg:hidden">
+        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
+            <OceanLedLogo size={34} className="shadow-none!" />
+            <div>
+              <p className="text-sm font-extrabold uppercase leading-none tracking-wide">
+                OCEAN LED
+              </p>
+              <p className="mt-1 text-[9px] font-medium uppercase tracking-[0.2em] text-ocean-cyan">
+                Admin Panel
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-ocean-cyan transition-colors"
+              aria-label="View site"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/60 transition hover:border-ocean-cyan/40 hover:text-ocean-cyan"
             >
               <ArrowLeft size={15} />
-              View Site
             </button>
             <button
               type="button"
               onClick={logout}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3.5 py-1.5 text-sm text-white/60 hover:border-red-400/40 hover:text-red-400 transition-colors"
+              aria-label="Logout"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/60 transition hover:border-red-400/40 hover:text-red-400"
             >
-              <LogOut size={14} />
-              Logout
+              <LogOut size={15} />
             </button>
           </div>
         </div>
+
+        <div className="flex gap-2 overflow-x-auto px-4 pb-3 sm:px-6">
+          {tabs.map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => changeTab(t.id)}
+                className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-[11px] font-medium uppercase tracking-wider transition ${
+                  active
+                    ? "border-ocean-cyan/30 bg-ocean-cyan/6 text-ocean-cyan"
+                    : "border-white/10 text-white/60"
+                }`}
+              >
+                <t.icon size={13} />
+                {t.label}
+                {(t.badge ?? 0) > 0 && (
+                  <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-ocean-cyan px-1 text-[9px] font-bold text-black">
+                    {t.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
-        <div className="flex flex-wrap gap-2 mb-8">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => {
-                setTab(t.id);
-                setSelectedId(null);
-              }}
-              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                tab === t.id
-                  ? 'bg-ocean-cyan/15 text-ocean-cyan border border-ocean-cyan/30'
-                  : 'text-white/50 border border-white/10 hover:border-white/20 hover:text-white/70'
-              }`}
-            >
-              <t.icon size={15} />
-              {t.label}
-              {(t.badge ?? 0) > 0 && (
-                <span className="ml-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ocean-cyan text-[10px] font-bold text-ocean-dark px-1.5">
-                  {t.badge}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+      {/* ───────── MAIN ───────── */}
+      <main className="relative lg:pl-72">
+        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 md:py-12 lg:px-10">
+          {/* page header */}
+          <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
+            <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
+            Dashboard // {current.label}
+          </span>
+          <h1 className="mt-4 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl">
+            {current.title.split(" ")[0]}
+            <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+              {current.title.split(" ").slice(1).join(" ")}
+            </span>
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/60 sm:text-base">
+            {current.sub}
+          </p>
 
-        {/* INQUIRIES TAB */}
-        {tab === 'inquiries' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div>
-                <h2 className="text-lg font-semibold">Form Submissions</h2>
-                <p className="text-sm text-white/40">
-                  {inquiries.length === 0
-                    ? 'No inquiries yet. When a client submits the contact form, it will appear here.'
-                    : `${inquiries.length} total · ${unreadCount} unread`}
-                </p>
-              </div>
-              {inquiries.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (window.confirm('Delete all inquiries?')) clearInquiries();
-                  }}
-                  className="text-xs text-red-400/70 hover:text-red-400 border border-red-400/20 rounded-full px-3 py-1.5 transition-colors"
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-
-            {inquiries.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-white/2 p-16 text-center">
-                <Inbox size={40} className="mx-auto text-white/20 mb-4" />
-                <p className="text-white/40 text-sm">Waiting for form submissions…</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-                <div className="lg:col-span-2 space-y-2 max-h-[70vh] overflow-y-auto pr-1">
-                  {inquiries.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => openInquiry(item.id)}
-                      className={`w-full text-left rounded-xl border p-4 transition-all ${
-                        selectedId === item.id
-                          ? 'border-ocean-cyan/40 bg-ocean-cyan/10'
-                          : item.read
-                          ? 'border-white/6 bg-white/2 hover:border-white/15'
-                          : 'border-ocean-cyan/20 bg-ocean-cyan/5 hover:border-ocean-cyan/30'
-                      }`}
+          <div className="mt-8">
+            {/* ───────── INQUIRIES TAB ───────── */}
+            {tab === "inquiries" && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: "Total", value: inquiries.length, hl: false },
+                    { label: "Unread", value: unreadCount, hl: true },
+                    {
+                      label: "Read",
+                      value: inquiries.length - unreadCount,
+                      hl: false,
+                    },
+                  ].map((s) => (
+                    <div
+                      key={s.label}
+                      className="rounded-xl border border-white/10 bg-white/3 p-4 text-center sm:p-5"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className={`text-sm font-medium truncate ${item.read ? 'text-white/70' : 'text-white'}`}>
-                            {!item.read && (
-                              <span className="inline-block h-1.5 w-1.5 rounded-full bg-ocean-cyan mr-2 align-middle" />
-                            )}
-                            {item.name}
-                          </p>
-                          <p className="text-xs text-white/40 truncate mt-0.5">{item.email}</p>
-                        </div>
-                        <span className="text-[10px] text-white/30 whitespace-nowrap shrink-0">
-                          {formatDate(item.createdAt).split(',')[0]}
-                        </span>
-                      </div>
-                      <p className="text-xs text-white/35 mt-2 line-clamp-2">{item.message}</p>
-                    </button>
+                      <p
+                        className={`text-2xl font-extrabold tracking-tight sm:text-4xl ${
+                          s.hl ? "text-ocean-cyan" : "text-white"
+                        }`}
+                      >
+                        {s.value}
+                      </p>
+                      <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-white/45 sm:text-xs">
+                        {s.label}
+                      </p>
+                    </div>
                   ))}
                 </div>
 
-                <div className="lg:col-span-3">
-                  {selected ? (
-                    <div className="rounded-2xl border border-white/6 bg-white/2 p-6 space-y-5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="text-xl font-semibold text-white">{selected.name}</h3>
-                          <p className="text-xs text-white/40 mt-1">{formatDate(selected.createdAt)}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            deleteInquiry(selected.id);
-                            setSelectedId(null);
-                          }}
-                          className="inline-flex items-center gap-1.5 text-xs text-red-400/70 hover:text-red-400 border border-red-400/20 rounded-full px-3 py-1.5 transition-colors"
-                        >
-                          <Trash2 size={13} />
-                          Delete
-                        </button>
-                      </div>
+                {inquiries.length > 0 && (
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm("Delete all inquiries?"))
+                          clearInquiries();
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full border border-red-400/25 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-red-400/80 transition hover:border-red-400/50 hover:text-red-400"
+                    >
+                      <Trash2 size={12} />
+                      Clear all
+                    </button>
+                  </div>
+                )}
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="rounded-xl border border-white/ 6  border-white/ 3] p-3">
-                          <p className="text-[10px] uppercase tracking-wider text-white/35 mb-1">Email</p>
-                          <a href={`mailto:${selected.email}`} className="text-sm text-ocean-cyan hover:underline break-all">
-                            {selected.email}
+                {inquiries.length === 0 ? (
+                  <Card className="py-16 text-center">
+                    <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan">
+                      <Inbox size={28} strokeWidth={1.5} />
+                    </span>
+                    <p className="mt-5 text-lg font-bold uppercase tracking-wide text-white">
+                      No inquiries yet
+                    </p>
+                    <p className="mx-auto mt-2 max-w-sm text-sm text-white/50">
+                      When a client submits the contact form, it will appear
+                      here.
+                    </p>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-5">
+                    {/* list */}
+                    <Card className="p-3! xl:col-span-2">
+                      <div className="max-h-[70vh] space-y-2 overflow-y-auto p-1 pr-2">
+                        {inquiries.map((item) => {
+                          const isSel = selectedId === item.id;
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => openInquiry(item.id)}
+                              className={`w-full rounded-xl border p-4 text-left transition ${
+                                isSel
+                                  ? "border-ocean-cyan/40 bg-ocean-cyan/6"
+                                  : item.read
+                                    ? "border-white/10 bg-white3 hover:border-ocean-cyan/30"
+                                    : "border-ocean-cyan/25 bg-ocean-cyan4 hover:border-ocean-cyan/40"
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                  <p
+                                    className={`truncate text-sm font-bold uppercase tracking-wide ${
+                                      item.read ? "text-white/70" : "text-white"
+                                    }`}
+                                  >
+                                    {!item.read && (
+                                      <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ocean-cyan align-middle shadow-[0_0_8px_rgba(0,229,255,0.9)]" />
+                                    )}
+                                    {item.name}
+                                  </p>
+                                  <p className="mt-0.5 truncate text-xs text-white/40">
+                                    {item.email}
+                                  </p>
+                                </div>
+                                <span className="shrink-0 whitespace-nowrap text-[10px] text-white/30">
+                                  {formatDate(item.createdAt).split(",")[0]}
+                                </span>
+                              </div>
+                              <p className="mt-2 line-clamp-2 text-xs text-white/40">
+                                {item.message}
+                              </p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </Card>
+
+                    {/* detail */}
+                    <div className="xl:col-span-3">
+                      {selected ? (
+                        <Card className="space-y-5">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-medium uppercase tracking-wider text-white/40">
+                                Inquiry from
+                              </p>
+                              <h3 className="mt-0.5 text-xl font-bold uppercase tracking-wide text-white">
+                                {selected.name}
+                              </h3>
+                              <p className="mt-1 text-xs text-white/40">
+                                {formatDate(selected.createdAt)}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                deleteInquiry(selected.id);
+                                setSelectedId(null);
+                              }}
+                              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-red-400/25 px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wider text-red-400/80 transition hover:border-red-400/50 hover:text-red-400"
+                            >
+                              <Trash2 size={12} />
+                              Delete
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <div className="rounded-xl border border-white/10 bg-white/3 p-4">
+                              <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-white/40">
+                                Email
+                              </p>
+                              <a
+                                href={`mailto:${selected.email}`}
+                                className="break-all text-sm text-ocean-cyan hover:underline"
+                              >
+                                {selected.email}
+                              </a>
+                            </div>
+                            <div className="rounded-xl border border-white/10 bg-white/3 p-4">
+                              <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-white/40">
+                                Phone
+                              </p>
+                              <p className="text-sm text-white/75">
+                                {selected.phone || "—"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="rounded-xl border border-white/10 bg-white/3 p-4">
+                            <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-white/40">
+                              Message
+                            </p>
+                            <p className="whitespace-pre-wrap text-sm leading-relaxed text-white/70">
+                              {selected.message}
+                            </p>
+                          </div>
+
+                          <a
+                            href={`mailto:${selected.email}?subject=Re: Your inquiry to OCEAN LED`}
+                            className="inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
+                          >
+                            <Mail size={15} />
+                            Reply by Email
+                            <ChevronRight size={15} />
                           </a>
-                        </div>
-                        <div className="rounded-xl border border-white/ 6  border-white/ 3] p-3">
-                          <p className="text-[10px] uppercase tracking-wider text-white/35 mb-1">Phone</p>
-                          <p className="text-sm text-white/70">{selected.phone || '—'}</p>
-                        </div>
-                      </div>
+                        </Card>
+                      ) : (
+                        <Card className="flex min-h-72 flex-col items-center justify-center text-center">
+                          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan">
+                            <Eye size={24} strokeWidth={1.5} />
+                          </span>
+                          <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-white/60">
+                            Select an inquiry
+                          </p>
+                          <p className="mt-1 text-xs text-white/35">
+                            Pick one from the list to read the full message.
+                          </p>
+                        </Card>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
-                      <div className="rounded-xl border border-white/ 6  border-white/ 3] p-4">
-                        <p className="text-[10px] uppercase tracking-wider text-white/35 mb-2">Message</p>
-                        <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">
-                          {selected.message}
+            {/* ───────── CONTACT TAB ───────── */}
+            {tab === "contact" && (
+              <Card className="max-w-2xl space-y-5">
+                <div>
+                  <label className={labelCls}>
+                    <Mail size={13} /> Email
+                  </label>
+                  <input
+                    type="email"
+                    value={contact.email}
+                    onChange={(e) =>
+                      setContact({ ...contact, email: e.target.value })
+                    }
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>
+                    <Phone size={13} /> Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={contact.phone}
+                    onChange={(e) =>
+                      setContact({ ...contact, phone: e.target.value })
+                    }
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>
+                    <MapPin size={13} /> Address
+                  </label>
+                  <input
+                    type="text"
+                    value={contact.address}
+                    onChange={(e) =>
+                      setContact({ ...contact, address: e.target.value })
+                    }
+                    className={inputCls}
+                  />
+                </div>
+              </Card>
+            )}
+
+            {/* ───────── ABOUT TAB ───────── */}
+            {tab === "about" && (
+              <Card className="max-w-2xl space-y-6">
+                <div>
+                  <label className={labelCls}>
+                    <ImageIcon size={13} /> About Image
+                  </label>
+                  <ImageUpload
+                    value={about.image}
+                    onChange={(img) => setAbout({ ...about, image: img })}
+                    previewClass="h-40 w-full"
+                    maxWidth={1000}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {(
+                    [
+                      ["since", "Since"],
+                      ["projects", "Projects"],
+                      ["cities", "Cities"],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <div key={key}>
+                      <label className={labelCls}>{label}</label>
+                      <input
+                        type="text"
+                        value={about[key]}
+                        onChange={(e) =>
+                          setAbout({ ...about, [key]: e.target.value })
+                        }
+                        className={inputCls}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* ───────── PROJECTS TAB ───────── */}
+            {tab === "projects" && (
+              <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+                {projects.map((project, i) => (
+                  <Card key={i} className="space-y-4 p-5!">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-xs font-bold text-ocean-cyan">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-white/40">
+                          Project {i + 1}
+                        </p>
+                        <p className="truncate text-sm font-bold uppercase tracking-wide text-white">
+                          {project.title || "Untitled"}
                         </p>
                       </div>
+                    </div>
 
-                      <a
-                        href={`mailto:${selected.email}?subject=Re: Your inquiry to OCEAN LED`}
-                        className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-ocean-blue to-ocean-cyan px-5 py-2.5 text-sm font-semibold text-ocean-dark"
-                      >
-                        <Mail size={15} />
-                        Reply by Email
-                      </a>
+                    <input
+                      type="text"
+                      value={project.title}
+                      onChange={(e) =>
+                        updateProjectField(i, "title", e.target.value)
+                      }
+                      placeholder="Title"
+                      className={inputCls}
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <input
+                        type="text"
+                        value={project.category}
+                        onChange={(e) =>
+                          updateProjectField(i, "category", e.target.value)
+                        }
+                        placeholder="Category"
+                        className={inputCls}
+                      />
+                      <input
+                        type="text"
+                        value={project.location}
+                        onChange={(e) =>
+                          updateProjectField(i, "location", e.target.value)
+                        }
+                        placeholder="Location"
+                        className={inputCls}
+                      />
                     </div>
-                  ) : (
-                    <div className="rounded-2xl border border-dashed border-white/10 bg-white/2 p-16 text-center h-full flex flex-col items-center justify-center min-h-70">
-                      <Eye size={32} className="text-white/20 mb-3" />
-                      <p className="text-sm text-white/35">Select an inquiry to view details</p>
-                    </div>
-                  )}
+                    <ImageUpload
+                      value={project.image}
+                      onChange={(img) => updateProjectField(i, "image", img)}
+                      previewClass="h-40 w-full"
+                      maxWidth={900}
+                    />
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* ───────── SAVE BAR ───────── */}
+            {tab !== "inquiries" && (
+              <div className="sticky bottom-4 z-30 mt-8">
+                <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-[#0a1220]/90 p-3 shadow-[0_0_60px_rgba(0,0,0,0.6)] backdrop-blur-md">
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    className="inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
+                  >
+                    {saved ? (
+                      <>
+                        <CheckCircle size={16} /> Saved
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} /> Save Changes
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="inline-flex items-center gap-2 rounded-md border border-white/15 px-5 py-3 text-sm font-bold uppercase tracking-wide text-white/60 transition hover:border-red-400/40 hover:text-red-400"
+                  >
+                    <RotateCcw size={15} />
+                    Reset to Defaults
+                  </button>
                 </div>
               </div>
             )}
           </div>
-        )}
-
-        {/* CONTACT TAB */}
-        {tab === 'contact' && (
-          <div className="rounded-2xl border border-white/ 6  bg-white/2 p-6 sm:p-8 space-y-5 max-w-xl">
-            <h2 className="text-lg font-semibold mb-2">Contact Information</h2>
-            <p className="text-sm text-white/40 mb-4">These appear in the Contact section and Footer.</p>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-white/60 mb-1.5">
-                <Mail size={14} /> Email
-              </label>
-              <input
-                type="email"
-                value={contact.email}
-                onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                className="w-full rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-              />
-            </div>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-white/60 mb-1.5">
-                <Phone size={14} /> Phone
-              </label>
-              <input
-                type="text"
-                value={contact.phone}
-                onChange={(e) => setContact({ ...contact, phone: e.target.value })}
-                className="w-full rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-              />
-            </div>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-white/60 mb-1.5">
-                <MapPin size={14} /> Address
-              </label>
-              <input
-                type="text"
-                value={contact.address}
-                onChange={(e) => setContact({ ...contact, address: e.target.value })}
-                className="w-full rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* ABOUT TAB */}
-        {tab === 'about' && (
-          <div className="rounded-2xl border border-white/ 6  bg-white/2 p-6 sm:p-8 space-y-5 max-w-xl">
-            <h2 className="text-lg font-semibold mb-2">About Section</h2>
-            <p className="text-sm text-white/40 mb-4">Image and statistics shown on the About section.</p>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-white/60 mb-1.5">
-                <ImageIcon size={14} /> About Image
-              </label>
-              <ImageUpload
-                value={about.image}
-                onChange={(img) => setAbout({ ...about, image: img })}
-                previewClass="h-32 w-full"
-                maxWidth={1000}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1.5">Since</label>
-                <input
-                  type="text"
-                  value={about.since}
-                  onChange={(e) => setAbout({ ...about, since: e.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-white/4 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1.5">Projects</label>
-                <input
-                  type="text"
-                  value={about.projects}
-                  onChange={(e) => setAbout({ ...about, projects: e.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-white/4 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1.5">Cities</label>
-                <input
-                  type="text"
-                  value={about.cities}
-                  onChange={(e) => setAbout({ ...about, cities: e.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-white/4 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* PROJECTS TAB */}
-        {tab === 'projects' && (
-          <div className="space-y-5">
-            <h2 className="text-lg font-semibold">Project Images</h2>
-            <p className="text-sm text-white/40 mb-2">
-              Update title, category, location, and image for each project card.
-            </p>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {projects.map((project, i) => (
-                <div key={i} className="rounded-2xl border border-white/ 6  bg-white/2 p-5 space-y-3">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="text-xs font-medium text-ocean-cyan">Project {i + 1}</span>
-                  </div>
-                  <input
-                    type="text"
-                    value={project.title}
-                    onChange={(e) => updateProjectField(i, 'title', e.target.value)}
-                    placeholder="Title"
-                    className="w-full rounded-lg border border-white/10 bg-white/4 px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-                  />
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      value={project.category}
-                      onChange={(e) => updateProjectField(i, 'category', e.target.value)}
-                      placeholder="Category"
-                      className="w-full rounded-lg border border-white/10 bg-white/4 px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-                    />
-                    <input
-                      type="text"
-                      value={project.location}
-                      onChange={(e) => updateProjectField(i, 'location', e.target.value)}
-                      placeholder="Location"
-                      className="w-full rounded-lg border border-white/10 bg-white/4 px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-ocean-cyan/40 transition"
-                    />
-                  </div>
-                  <ImageUpload
-                    value={project.image}
-                    onChange={(img) => updateProjectField(i, 'image', img)}
-                    previewClass="h-36 w-full"
-                    maxWidth={900}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab !== 'inquiries' && (
-          <div className="mt-8 flex flex-wrap items-center gap-3 sticky bottom-4">
-            <button
-              type="button"
-              onClick={handleSave}
-              className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-ocean-blue to-ocean-cyan px-6 py-3 text-sm font-semibold text-ocean-dark shadow-lg shadow-ocean-blue/25 hover:shadow-ocean-cyan/40 transition-all"
-            >
-              {saved ? (
-                <><CheckCircle size={16} /> Saved!</>
-              ) : (
-                <><Save size={16} /> Save Changes</>
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm text-white/50 hover:border-white/20 hover:text-white/70 transition-colors"
-            >
-              <RotateCcw size={15} />
-              Reset to Defaults
-            </button>
-          </div>
-        )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
