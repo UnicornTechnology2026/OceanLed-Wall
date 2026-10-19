@@ -1,17 +1,44 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from "react";
+import { navigate } from "../router";
 
-const FRAME_COUNT = 36;
-const frameSrc = (i: number) => `/frames/frame-${i + 1}.jpeg`;
+// frame-10.jpeg doesn't exist in /public/frames, so skip it
+const FRAME_IDS = Array.from({ length: 36 }, (_, i) => i + 1).filter(
+  (n) => n !== 10,
+);
+const FRAME_COUNT = FRAME_IDS.length;
+const frameSrc = (i: number) => `/frames/frame-${FRAME_IDS[i]}.jpeg`;
+
+// Where the product sits horizontally in each source frame (0 = left, 1 = right).
+const centerXFor = (n: number) => {
+  if (n <= 26) return 0.5;
+  if (n === 27) return 0.55;
+  if (n <= 29) return 0.62;
+  if (n <= 35) return 0.61;
+  return 0.505; // frame 36 text block is centred around here
+};
+const CENTER_X = FRAME_IDS.map(centerXFor);
+
+// Width of the important content as a fraction of the source image width.
+// When set, the frame is scaled down so this content always stays inside the box.
+// (frame 36 = the wide "OCEAN LED" close-up)
+const contentWidthFor = (n: number) => (n === 36 ? 0.75 : 0);
+const CONTENT_W = FRAME_IDS.map(contentWidthFor);
+
+// How much of the card width the content may use
+const FIT_MARGIN = 0.88;
+// Background colour used where a fitted frame doesn't fill the whole card
+const FILL = "#050a18";
 
 export default function ScrollProduct() {
   const wrapRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const images: HTMLImageElement[] = [];
@@ -21,7 +48,7 @@ export default function ScrollProduct() {
 
     for (let i = 0; i < FRAME_COUNT; i++) {
       const img = new Image();
-      img.onerror = () => console.error('Frame failed to load:', frameSrc(i));
+      img.onerror = () => console.error("Frame failed to load:", frameSrc(i));
       img.src = frameSrc(i);
       images.push(img);
     }
@@ -32,15 +59,43 @@ export default function ScrollProduct() {
       canvas.height = Math.max(canvas.clientHeight, 1) * dpr;
     };
 
-    const drawCover = (img: HTMLImageElement, alpha: number) => {
+    const drawCover = (
+      img: HTMLImageElement,
+      alpha: number,
+      cx: number,
+      contentW: number,
+    ) => {
       if (!img.complete || !img.naturalWidth || alpha <= 0) return;
       const cw = canvas.width;
       const ch = canvas.height;
-      const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+
+      // cover scale, slightly zoomed so there is room to pan
+      let scale =
+        Math.max(cw / img.naturalWidth, ch / img.naturalHeight) * 1.05;
+
+      // keep wide content (like the OCEAN LED text) fully inside the box
+      if (contentW > 0) {
+        const fitScale = (cw * FIT_MARGIN) / (contentW * img.naturalWidth);
+        scale = Math.min(scale, fitScale);
+      }
+
       const w = img.naturalWidth * scale;
       const h = img.naturalHeight * scale;
+
+      // centre the product (cx), but never pan so far that an empty edge shows
+      const dx =
+        w >= cw ? Math.min(0, Math.max(cw - w, cw / 2 - cx * w)) : (cw - w) / 2;
+      const dy = (ch - h) / 2;
+
+      // fitted frames may leave gaps (top/bottom) - fill them with the frame's dark colour
+      if (contentW > 0) {
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = FILL;
+        ctx.fillRect(0, 0, cw, ch);
+      }
+
       ctx.globalAlpha = alpha;
-      ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+      ctx.drawImage(img, dx, dy, w, h);
       ctx.globalAlpha = 1;
     };
 
@@ -48,16 +103,19 @@ export default function ScrollProduct() {
       const i = Math.min(Math.floor(pos), FRAME_COUNT - 1);
       const next = Math.min(i + 1, FRAME_COUNT - 1);
       const t = pos - i;
+      // smoothly pan between the two frames' centre points
+      const cx = CENTER_X[i] + (CENTER_X[next] - CENTER_X[i]) * t;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawCover(images[i], 1);
-      if (next !== i) drawCover(images[next], t);
+      drawCover(images[i], 1, cx, CONTENT_W[i]);
+      if (next !== i) drawCover(images[next], t, cx, CONTENT_W[next]);
     };
 
     const onScroll = () => {
       const rect = wrap.getBoundingClientRect();
       const total = wrap.offsetHeight - window.innerHeight;
-      const progress = Math.min(Math.max(-rect.top / total, 0), 1);
-      target = progress * (FRAME_COUNT - 1);
+      const p = Math.min(Math.max(-rect.top / total, 0), 1);
+      target = p * (FRAME_COUNT - 1);
+      setProgress(p);
     };
 
     const loop = () => {
@@ -70,36 +128,76 @@ export default function ScrollProduct() {
     onScroll();
     loop();
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', resize);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", resize);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', resize);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", resize);
     };
   }, []);
 
-return (
-  <section ref={wrapRef} id="product" className="relative h-[300vh] bg-ocean-dark">
-    <div className="sticky top-0 flex h-screen w-full flex-col overflow-hidden pt-20 md:pt-24">
-      {/* Heading above the frame */}
-      <div className="shrink-0 px-4 pb-4 text-center">
-        <p className="text-sm font-semibold tracking-[0.25em] uppercase text-ocean-cyan">
-          Engineered Inside Out
-        </p>
-        <h2 className="mt-3 text-3xl sm:text-5xl font-bold text-white">
-          Precision in Every Cabinet
-        </h2>
-      </div>
+  return (
+    <section
+      ref={wrapRef}
+      id="product"
+      className="relative h-[300vh] bg-ocean-dark"
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden pt-20 md:pt-24">
+        {/* soft background glow */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,255,0,0.07),transparent_55%)]" />
 
-      {/* Frame area fills the remaining height */}
-      <div className="relative min-h-0 flex-1">
-        <canvas ref={canvasRef} className="block h-full w-full" />
-        <p className="pointer-events-none absolute bottom-4 inset-x-0 text-center text-xs tracking-widest uppercase text-white/40">
-          Scroll to rotate
-        </p>
+        <div className="relative mx-auto grid h-full max-w-7xl grid-cols-1 items-center gap-6 px-4 pb-6 sm:px-6 lg:grid-cols-[1fr_1.45fr] lg:gap-10 lg:px-8">
+          {/* ───────── SECTION 1 : TEXT ───────── */}
+          <div className="order-1 flex flex-col items-start">
+            <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+              High-Luminance Commercial Displays
+              <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+                Built to eliminate downtime.
+              </span>
+            </h2>
+
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/75 sm:text-lg">
+              Direct-view LED architecture designed for continuous 24/7
+              mission-critical operations, harsh ambient sunlight, and ultra-low
+              maintenance overhead.
+            </p>
+
+            <button
+              onClick={() => navigate("contact")}
+              className="mt-6 inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(212,255,0,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(212,255,0,0.55)] sm:px-8 sm:py-4"
+            >
+              Request Engineering Proposal
+              <span className="h-1.5 w-1.5 rounded-full bg-black" />
+            </button>
+          </div>
+
+          {/* ───────── SECTION 2 : FRAME CARD ───────── */}
+          <div className="relative order-2 h-full max-h-[48vh] min-h-0 lg:max-h-[78vh]">
+            <div className="relative h-full overflow-hidden rounded-[28px] border border-white/10 bg-black shadow-[0_0_80px_rgba(0,0,0,0.6)]">
+              {/* lime top edge highlight */}
+              <div className="pointer-events-none absolute inset-x-10 top-0 z-10 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
+
+              <canvas ref={canvasRef} className="block h-full w-full" />
+
+              {/* vignette */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.55)_100%)]" />
+
+              <p className="pointer-events-none absolute inset-x-0 bottom-4 text-center text-[10px] uppercase tracking-widest text-white/40 sm:text-xs">
+                Scroll to rotate
+              </p>
+
+              {/* scroll progress bar */}
+              <div className="absolute inset-x-0 bottom-0 h-0.75 bg-white/5">
+                <div
+                  className="h-full bg-ocean-cyan"
+                  style={{ width: `${progress * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
 }
