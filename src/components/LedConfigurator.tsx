@@ -405,6 +405,19 @@ function fitCamera(t: ThreeState, box: THREE.Box3, keepDirection: boolean) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Shared styles                                                       */
+/* ------------------------------------------------------------------ */
+
+const cardClass =
+  "relative overflow-hidden rounded-[28px] border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] shadow-[0_0_80px_rgba(0,0,0,0.6)]";
+
+const TopEdge = () => (
+  <div className="pointer-events-none absolute inset-x-10 top-0 z-10 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
+);
+
+const STEPS = ["Pick a shape", "Set size & pixel pitch", "Request your quote"];
+
+/* ------------------------------------------------------------------ */
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
 
@@ -418,13 +431,13 @@ interface QuoteForm {
 type QuoteErrors = Partial<Record<"name" | "phone" | "email", string>>;
 
 const fieldClass =
-  "w-full rounded-xl border bg-white/4 px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none focus:ring-2 focus:ring-ocean-cyan/40 focus:border-ocean-cyan/40 transition";
+  "w-full rounded-xl border bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-ocean-cyan/50 focus:ring-2 focus:ring-ocean-cyan/20";
 
 const chipClass = (active: boolean) =>
   `rounded-lg border px-3 py-2 text-sm transition-colors ${
     active
       ? "border-ocean-cyan/60 bg-ocean-cyan/15 text-white"
-      : "border-white/10 bg-white/3 text-white/60 hover:border-ocean-cyan/30"
+      : "border-white/10 bg-white/[0.03] text-white/60 hover:border-ocean-cyan/40"
   }`;
 
 export default function LedConfigurator() {
@@ -598,394 +611,464 @@ export default function LedConfigurator() {
       ? ["Convex (bulges out)", "Concave (wraps viewer)"]
       : ["Outside corner", "Inside corner"];
 
+  const shapeLabel = SHAPES.find((s) => s.key === config.shape)?.label ?? "";
+
+  const specRows: [string, string, string][] = [
+    [
+      "Display size",
+      `${fmt(config.width)} × ${fmt(config.height)} m`,
+      `${fmt(config.width * FT_PER_M)} × ${fmt(config.height * FT_PER_M)} ft`,
+    ],
+    ["Area", `${fmt(specs.area)} sq m`, `${fmt(specs.areaFt, 0)} sq ft`],
+    [
+      "Cabinets",
+      `${specs.cabinets} pcs`,
+      `${specs.cols} × ${specs.rows} (500 × 500 mm)`,
+    ],
+    [
+      "Resolution",
+      `${specs.resX} × ${specs.resY}`,
+      `${fmt(specs.megapixels, 2)} megapixels`,
+    ],
+    ["Pixel pitch", `P${config.pitch}`, `View from ${fmt(config.pitch)} m +`],
+    ["Shape", shapeLabel, specs.detail || "Flat"],
+  ];
+
   return (
     <section
       id="configurator"
-      className="relative py-20 md:py-28 bg-ocean-dark overflow-hidden"
+      className="relative overflow-x-clip bg-ocean-dark py-20 md:py-28"
     >
+      {/* soft cyan glow, same style as the portfolio section */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_15%_25%,rgba(0,229,255,0.08),transparent_55%)]" />
+      <div className="pointer-events-none absolute -right-40 top-1/3 h-96 w-96 rounded-full bg-ocean-cyan/10 blur-[140px]" />
+
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* ───────── INTRO ───────── */}
         <Reveal>
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 rounded-full border border-ocean-cyan/20 bg-ocean-cyan/5 px-4 py-1.5 mb-5">
-              <Box size={14} className="text-ocean-cyan" />
-              <p className="text-xs font-semibold tracking-[0.2em] uppercase text-ocean-cyan">
-                3D Configurator
-              </p>
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              Design Your{" "}
-              <span className="bg-linear-to-r from-ocean-cyan to-ocean-blue bg-clip-text text-transparent">
-                LED Display
-              </span>
-            </h2>
-            <p className="mt-5 max-w-xl mx-auto text-base text-white/55 leading-relaxed">
-              Choose a shape and size, preview it in 3D, then request a quote
-              for your design.
-            </p>
-          </div>
+          <h2 className="mt-5 max-w-4xl text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+            Design your LED display
+            <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+              see it before you build it.
+            </span>
+          </h2>
+
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-lg">
+            Change the settings and watch the 3D preview update right beside
+            them. Drag the preview to rotate it, then send the finished design
+            to us for a quote.
+          </p>
+
+          <ol className="mt-6 flex flex-wrap gap-3">
+            {STEPS.map((label, i) => (
+              <li
+                key={label}
+                className="inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/3 py-1.5 pl-1.5 pr-4 text-xs font-medium uppercase tracking-wider text-white/70 sm:text-sm"
+              >
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-ocean-cyan text-xs font-bold text-black">
+                  {i + 1}
+                </span>
+                {label}
+              </li>
+            ))}
+          </ol>
         </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Viewport + specs */}
-          <div className="lg:col-span-3 space-y-4">
-            <div className="relative overflow-hidden rounded-2xl border border-white/6 bg-linear-to-b from-[#0a1626] to-[#050b14]">
-              <div
-                ref={viewportRef}
-                className="h-90 sm:h-115 lg:h-130 w-full touch-none"
-              />
-              {webglFailed && (
-                <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-white/60">
-                  3D preview is not supported on this device. You can still
-                  choose your configuration and request a quote.
-                </div>
-              )}
-              <p className="pointer-events-none absolute bottom-3 left-4 text-xs text-white/35">
-                Drag to rotate · Scroll or pinch to zoom
-              </p>
-              <button
-                type="button"
-                onClick={resetView}
-                className="absolute bottom-3 right-4 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/60 hover:text-ocean-cyan transition-colors"
-              >
-                <RotateCcw size={12} /> Reset view
-              </button>
-            </div>
+        {/* ───────── MAIN : SETTINGS (left) + STICKY PREVIEW (right) ───────── */}
+        <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+          {/* 3D PREVIEW - stays on screen while the settings scroll */}
+          <div className="sticky top-20 z-20 lg:top-28 lg:order-2">
+            <div className={`${cardClass} p-2 sm:p-4 lg:p-6`}>
+              <TopEdge />
 
-            <dl className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {[
-                [
-                  "Display size",
-                  `${fmt(config.width)} × ${fmt(config.height)} m`,
-                  `${fmt(config.width * FT_PER_M)} × ${fmt(config.height * FT_PER_M)} ft`,
-                ],
-                [
-                  "Area",
-                  `${fmt(specs.area)} sq m`,
-                  `${fmt(specs.areaFt, 0)} sq ft`,
-                ],
-                [
-                  "Cabinets",
-                  `${specs.cabinets} pcs`,
-                  `${specs.cols} × ${specs.rows} (500 × 500 mm)`,
-                ],
-                [
-                  "Resolution",
-                  `${specs.resX} × ${specs.resY}`,
-                  `${fmt(specs.megapixels, 2)} megapixels`,
-                ],
-                [
-                  "Pixel pitch",
-                  `P${config.pitch}`,
-                  `View from ${fmt(config.pitch)} m +`,
-                ],
-                [
-                  "Shape",
-                  SHAPES.find((s) => s.key === config.shape)?.label ?? "",
-                  specs.detail || "Flat",
-                ],
-              ].map(([label, value, sub]) => (
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-[#0a1626] to-[#050b14]">
                 <div
-                  key={label}
-                  className="rounded-xl border border-white/6 bg-white/2 p-4"
+                  ref={viewportRef}
+                  className="h-56 w-full touch-none sm:h-72 lg:h-96"
+                />
+                {webglFailed && (
+                  <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-white/60">
+                    3D preview is not supported on this device. You can still
+                    choose your configuration and request a quote.
+                  </div>
+                )}
+                <p className="pointer-events-none absolute bottom-3 left-4 hidden text-[10px] uppercase tracking-widest text-white/40 sm:block sm:text-xs">
+                  Drag to rotate · Scroll or pinch to zoom
+                </p>
+                <button
+                  type="button"
+                  onClick={resetView}
+                  className="absolute bottom-3 right-4 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/60 transition-colors hover:text-ocean-cyan"
                 >
-                  <dt className="text-xs uppercase tracking-wider text-white/40">
-                    {label}
-                  </dt>
-                  <dd className="mt-1 text-sm font-semibold text-white">
-                    {value}
-                  </dd>
-                  <dd className="mt-0.5 text-xs text-white/40">{sub}</dd>
-                </div>
-              ))}
-            </dl>
+                  <RotateCcw size={12} /> Reset view
+                </button>
+              </div>
+
+              {/* compact summary on phones */}
+              <p className="mt-2 px-1 text-center text-xs text-white/60 lg:hidden">
+                <span className="font-semibold text-white">{shapeLabel}</span> ·{" "}
+                {fmt(config.width)} × {fmt(config.height)} m · P{config.pitch} ·{" "}
+                {specs.cabinets} cabinets
+              </p>
+
+              {/* full specs on larger screens */}
+              <dl className="mt-4 hidden grid-cols-3 gap-3 lg:grid">
+                {specRows.map(([label, value, sub]) => (
+                  <div
+                    key={label}
+                    className="rounded-xl border border-white/10 bg-white/3 p-3"
+                  >
+                    <dt className="text-[11px] uppercase tracking-wider text-white/40">
+                      {label}
+                    </dt>
+                    <dd className="mt-1 text-sm font-semibold text-white">
+                      {value}
+                    </dd>
+                    <dd className="mt-0.5 text-[11px] leading-snug text-white/40">
+                      {sub}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
 
-          {/* Controls + quote */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="rounded-2xl border border-white/6 bg-white/2 p-5 space-y-5">
-              <div>
-                <p className="mb-2 text-sm font-medium text-white/70">Shape</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {SHAPES.map((s) => (
-                    <button
-                      key={s.key}
-                      type="button"
-                      aria-pressed={config.shape === s.key}
-                      onClick={() => set("shape", s.key)}
-                      className={`flex items-start gap-2.5 rounded-xl border p-3 text-left transition-colors ${
-                        config.shape === s.key
-                          ? "border-ocean-cyan/60 bg-ocean-cyan/10"
-                          : "border-white/10 bg-white/3 hover:border-ocean-cyan/30"
-                      }`}
-                    >
-                      <s.icon
-                        size={18}
-                        className="mt-0.5 shrink-0 text-ocean-cyan"
-                      />
-                      <span>
-                        <span className="block text-sm font-medium text-white">
-                          {s.label}
-                        </span>
-                        <span className="block text-xs text-white/40">
-                          {s.hint}
-                        </span>
-                      </span>
-                    </button>
-                  ))}
+          {/* SETTINGS + QUOTE */}
+          <div className="space-y-6 lg:order-1">
+            {/* Step 1 : controls */}
+            <Reveal>
+              <div className={`${cardClass} space-y-6 p-6 sm:p-8`}>
+                <TopEdge />
+
+                <div>
+                  <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-white/45">
+                    <span className="h-2 w-2 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
+                    Step 1 · Configure
+                  </p>
+                  <h3 className="mt-2 text-2xl font-bold tracking-tight text-white">
+                    Customise your display
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/55">
+                    Changes appear in the 3D preview straight away.
+                  </p>
                 </div>
-              </div>
 
-              <div>
-                <label
-                  htmlFor="cfg-width"
-                  className="flex justify-between text-sm text-white/70"
-                >
-                  <span>
-                    {config.shape === "pillar" ? "Circumference" : "Width"}
-                  </span>
-                  <span className="font-medium text-white">
-                    {fmt(config.width)} m
-                  </span>
-                </label>
-                <input
-                  id="cfg-width"
-                  type="range"
-                  min={config.shape === "pillar" ? 2 : 1}
-                  max={20}
-                  step={0.5}
-                  value={config.width}
-                  onChange={(e) => set("width", Number(e.target.value))}
-                  className="mt-2 w-full accent-ocean-cyan"
-                />
-              </div>
+                <div>
+                  <p className="mb-2 text-sm font-medium text-white/70">
+                    Shape
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {SHAPES.map((s) => (
+                      <button
+                        key={s.key}
+                        type="button"
+                        aria-pressed={config.shape === s.key}
+                        onClick={() => set("shape", s.key)}
+                        className={`flex items-start gap-2.5 rounded-xl border p-3 text-left transition hover:-translate-y-0.5 ${
+                          config.shape === s.key
+                            ? "border-ocean-cyan/60 bg-ocean-cyan/10"
+                            : "border-white/10 bg-white/3 hover:border-ocean-cyan/40"
+                        }`}
+                      >
+                        <s.icon
+                          size={18}
+                          className="mt-0.5 shrink-0 text-ocean-cyan"
+                        />
+                        <span>
+                          <span className="block text-sm font-semibold text-white">
+                            {s.label}
+                          </span>
+                          <span className="block text-xs text-white/45">
+                            {s.hint}
+                          </span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-              <div>
-                <label
-                  htmlFor="cfg-height"
-                  className="flex justify-between text-sm text-white/70"
-                >
-                  <span>Height</span>
-                  <span className="font-medium text-white">
-                    {fmt(config.height)} m
-                  </span>
-                </label>
-                <input
-                  id="cfg-height"
-                  type="range"
-                  min={1}
-                  max={10}
-                  step={0.5}
-                  value={config.height}
-                  onChange={(e) => set("height", Number(e.target.value))}
-                  className="mt-2 w-full accent-ocean-cyan"
-                />
-              </div>
-
-              {config.shape === "curved" && (
                 <div>
                   <label
-                    htmlFor="cfg-angle"
+                    htmlFor="cfg-width"
                     className="flex justify-between text-sm text-white/70"
                   >
-                    <span>Curve angle</span>
+                    <span>
+                      {config.shape === "pillar" ? "Circumference" : "Width"}
+                    </span>
                     <span className="font-medium text-white">
-                      {config.angle}°
+                      {fmt(config.width)} m
                     </span>
                   </label>
                   <input
-                    id="cfg-angle"
+                    id="cfg-width"
                     type="range"
-                    min={15}
-                    max={180}
-                    step={5}
-                    value={config.angle}
-                    onChange={(e) => set("angle", Number(e.target.value))}
+                    min={config.shape === "pillar" ? 2 : 1}
+                    max={20}
+                    step={0.5}
+                    value={config.width}
+                    onChange={(e) => set("width", Number(e.target.value))}
                     className="mt-2 w-full accent-ocean-cyan"
                   />
                 </div>
-              )}
 
-              {(config.shape === "curved" || config.shape === "corner") && (
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => set("inward", false)}
-                    className={chipClass(!config.inward)}
+                <div>
+                  <label
+                    htmlFor="cfg-height"
+                    className="flex justify-between text-sm text-white/70"
                   >
-                    {insideLabel[0]}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => set("inward", true)}
-                    className={chipClass(config.inward)}
-                  >
-                    {insideLabel[1]}
-                  </button>
-                </div>
-              )}
-
-              <div>
-                <p className="mb-2 text-sm font-medium text-white/70">
-                  Pixel pitch
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {PITCHES.map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      aria-pressed={config.pitch === p}
-                      onClick={() => set("pitch", p)}
-                      className={chipClass(config.pitch === p)}
-                    >
-                      P{p}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-2 text-sm font-medium text-white/70">
-                  Preview content
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {CONTENTS.map((ct) => (
-                    <button
-                      key={ct.key}
-                      type="button"
-                      aria-pressed={config.content === ct.key}
-                      onClick={() => set("content", ct.key)}
-                      className={chipClass(config.content === ct.key)}
-                    >
-                      {ct.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/70">
-                <label className="inline-flex items-center gap-2 cursor-pointer">
+                    <span>Height</span>
+                    <span className="font-medium text-white">
+                      {fmt(config.height)} m
+                    </span>
+                  </label>
                   <input
-                    type="checkbox"
-                    checked={config.cabinetGrid}
-                    onChange={(e) => set("cabinetGrid", e.target.checked)}
-                    className="accent-ocean-cyan"
+                    id="cfg-height"
+                    type="range"
+                    min={1}
+                    max={10}
+                    step={0.5}
+                    value={config.height}
+                    onChange={(e) => set("height", Number(e.target.value))}
+                    className="mt-2 w-full accent-ocean-cyan"
                   />
-                  Show cabinet grid
-                </label>
-                <label className="inline-flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={config.person}
-                    onChange={(e) => set("person", e.target.checked)}
-                    className="accent-ocean-cyan"
-                  />
-                  Show person (1.7 m)
-                </label>
-              </div>
-            </div>
+                </div>
 
-            <div className="rounded-2xl border border-white/6 bg-white/2 p-5">
-              {sent ? (
-                <div className="py-6 text-center">
-                  <CheckCircle
-                    className="mx-auto mb-3 text-ocean-teal"
-                    size={44}
-                    strokeWidth={1.5}
-                  />
-                  <h3 className="text-lg font-semibold text-white mb-1">
-                    Quote Request Received
-                  </h3>
-                  <p className="text-sm text-white/60 mb-4">
-                    Our team will review your design and get back to you
-                    shortly.
+                {config.shape === "curved" && (
+                  <div>
+                    <label
+                      htmlFor="cfg-angle"
+                      className="flex justify-between text-sm text-white/70"
+                    >
+                      <span>Curve angle</span>
+                      <span className="font-medium text-white">
+                        {config.angle}°
+                      </span>
+                    </label>
+                    <input
+                      id="cfg-angle"
+                      type="range"
+                      min={15}
+                      max={180}
+                      step={5}
+                      value={config.angle}
+                      onChange={(e) => set("angle", Number(e.target.value))}
+                      className="mt-2 w-full accent-ocean-cyan"
+                    />
+                  </div>
+                )}
+
+                {(config.shape === "curved" || config.shape === "corner") && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => set("inward", false)}
+                      className={chipClass(!config.inward)}
+                    >
+                      {insideLabel[0]}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => set("inward", true)}
+                      className={chipClass(config.inward)}
+                    >
+                      {insideLabel[1]}
+                    </button>
+                  </div>
+                )}
+
+                <div>
+                  <p className="mb-2 text-sm font-medium text-white/70">
+                    Pixel pitch
                   </p>
-                  <button
-                    type="button"
-                    onClick={reset}
-                    className="text-sm text-ocean-cyan hover:underline"
-                  >
-                    Design another display
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    {PITCHES.map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        aria-pressed={config.pitch === p}
+                        onClick={() => set("pitch", p)}
+                        className={chipClass(config.pitch === p)}
+                      >
+                        P{p}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-white/40">
+                    A smaller number means a sharper picture for close viewing;
+                    a larger number suits longer viewing distances.
+                  </p>
                 </div>
-              ) : (
-                <form
-                  onSubmit={handleSubmit}
-                  noValidate
-                  className="space-y-3.5"
-                >
-                  <h3 className="text-base font-semibold text-white">
-                    Request a quote for this design
-                  </h3>
 
-                  <div>
-                    <input
-                      aria-label="Name"
-                      type="text"
-                      value={form.name}
-                      onChange={(e) =>
-                        setForm({ ...form, name: e.target.value })
-                      }
-                      placeholder="Your name *"
-                      className={`${fieldClass} ${errors.name ? "border-red-400/60" : "border-white/10"}`}
-                    />
-                    {errors.name && (
-                      <p className="mt-1 text-xs text-red-400">{errors.name}</p>
-                    )}
+                <div>
+                  <p className="mb-2 text-sm font-medium text-white/70">
+                    Preview content
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {CONTENTS.map((ct) => (
+                      <button
+                        key={ct.key}
+                        type="button"
+                        aria-pressed={config.content === ct.key}
+                        onClick={() => set("content", ct.key)}
+                        className={chipClass(config.content === ct.key)}
+                      >
+                        {ct.label}
+                      </button>
+                    ))}
                   </div>
-                  <div>
-                    <input
-                      aria-label="Phone"
-                      type="tel"
-                      value={form.phone}
-                      onChange={(e) =>
-                        setForm({ ...form, phone: e.target.value })
-                      }
-                      placeholder="Phone * (+91 98765 43210)"
-                      className={`${fieldClass} ${errors.phone ? "border-red-400/60" : "border-white/10"}`}
-                    />
-                    {errors.phone && (
-                      <p className="mt-1 text-xs text-red-400">
-                        {errors.phone}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      aria-label="Email"
-                      type="email"
-                      value={form.email}
-                      onChange={(e) =>
-                        setForm({ ...form, email: e.target.value })
-                      }
-                      placeholder="Email (optional)"
-                      className={`${fieldClass} ${errors.email ? "border-red-400/60" : "border-white/10"}`}
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-xs text-red-400">
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
-                  <textarea
-                    aria-label="Custom requirements"
-                    rows={3}
-                    value={form.notes}
-                    onChange={(e) =>
-                      setForm({ ...form, notes: e.target.value })
-                    }
-                    placeholder="Custom shape or other requirements (optional)"
-                    className={`${fieldClass} resize-none border-white/10`}
-                  />
+                </div>
 
-                  <button
-                    type="submit"
-                    className="w-full rounded-full bg-linear-to-r from-ocean-blue to-ocean-cyan px-6 py-3 text-sm font-semibold text-ocean-dark shadow-lg shadow-ocean-blue/25 hover:shadow-ocean-cyan/40 hover:scale-[1.01] transition-all"
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/70">
+                  <label className="inline-flex cursor-pointer items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={config.cabinetGrid}
+                      onChange={(e) => set("cabinetGrid", e.target.checked)}
+                      className="accent-ocean-cyan"
+                    />
+                    Show cabinet grid
+                  </label>
+                  <label className="inline-flex cursor-pointer items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={config.person}
+                      onChange={(e) => set("person", e.target.checked)}
+                      className="accent-ocean-cyan"
+                    />
+                    Show person (1.7 m)
+                  </label>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Step 2 : quote */}
+            <Reveal>
+              <div className={`${cardClass} p-6 sm:p-8`}>
+                <TopEdge />
+
+                {sent ? (
+                  <div className="py-10 text-center">
+                    <CheckCircle
+                      className="mx-auto mb-3 text-ocean-cyan"
+                      size={44}
+                      strokeWidth={1.5}
+                    />
+                    <h3 className="mb-1 text-lg font-bold uppercase tracking-wide text-white">
+                      Quote Request Received
+                    </h3>
+                    <p className="mb-4 text-sm text-white/60">
+                      Our team will review your design and get back to you
+                      shortly.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={reset}
+                      className="text-sm font-medium text-ocean-cyan hover:underline"
+                    >
+                      Design another display
+                    </button>
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={handleSubmit}
+                    noValidate
+                    className="space-y-4"
                   >
-                    Request Quote
-                  </button>
-                </form>
-              )}
-            </div>
+                    <div>
+                      <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-white/45">
+                        <span className="h-2 w-2 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
+                        Step 2 · Get a quote
+                      </p>
+                      <h3 className="mt-2 text-2xl font-bold tracking-tight text-white">
+                        Request a quote for this design
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-white/55">
+                        Your size, shape and pixel pitch are sent with the
+                        request. Our team replies with pricing and next steps.
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-ocean-cyan/20 bg-ocean-cyan/5 p-4 text-sm text-white/70">
+                      <span className="font-semibold text-white">
+                        {shapeLabel}
+                      </span>{" "}
+                      · {fmt(config.width)} × {fmt(config.height)} m · P
+                      {config.pitch} · {specs.cabinets} cabinets
+                    </div>
+
+                    <div>
+                      <input
+                        aria-label="Name"
+                        type="text"
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm({ ...form, name: e.target.value })
+                        }
+                        placeholder="Your name *"
+                        className={`${fieldClass} ${errors.name ? "border-red-400/60" : "border-white/10"}`}
+                      />
+                      {errors.name && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {errors.name}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        aria-label="Phone"
+                        type="tel"
+                        value={form.phone}
+                        onChange={(e) =>
+                          setForm({ ...form, phone: e.target.value })
+                        }
+                        placeholder="Phone * (+91 98765 43210)"
+                        className={`${fieldClass} ${errors.phone ? "border-red-400/60" : "border-white/10"}`}
+                      />
+                      {errors.phone && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {errors.phone}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        aria-label="Email"
+                        type="email"
+                        value={form.email}
+                        onChange={(e) =>
+                          setForm({ ...form, email: e.target.value })
+                        }
+                        placeholder="Email (optional)"
+                        className={`${fieldClass} ${errors.email ? "border-red-400/60" : "border-white/10"}`}
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {errors.email}
+                        </p>
+                      )}
+                    </div>
+                    <textarea
+                      aria-label="Custom requirements"
+                      rows={4}
+                      value={form.notes}
+                      onChange={(e) =>
+                        setForm({ ...form, notes: e.target.value })
+                      }
+                      placeholder="Custom shape or other requirements (optional)"
+                      className={`${fieldClass} resize-none border-white/10`}
+                    />
+
+                    <button
+                      type="submit"
+                      className="inline-flex w-full items-center justify-center gap-3 rounded-md bg-ocean-cyan px-6 py-4 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
+                    >
+                      Request Quote
+                      <span className="h-1.5 w-1.5 rounded-full bg-black" />
+                    </button>
+                  </form>
+                )}
+              </div>
+            </Reveal>
           </div>
         </div>
       </div>

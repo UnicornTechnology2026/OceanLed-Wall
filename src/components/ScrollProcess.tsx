@@ -1,11 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { navigate } from "../router";
 
-const FRAME_COUNT = 160;
-const frameSrc = (i: number) => `/esyframes/eframe-${i + 1}.webp`;
+// eframe-46.webp doesn't exist in /public/esyframes, so skip it
+const FRAME_IDS = Array.from({ length: 161 }, (_, i) => i + 1).filter(
+  (n) => n !== 46,
+);
+const FRAME_COUNT = FRAME_IDS.length;
+const frameSrc = (i: number) => `/esyframes/eframe-${FRAME_IDS[i]}.webp`;
 
 export default function ScrollProcess() {
   const wrapRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -32,6 +38,7 @@ export default function ScrollProcess() {
       canvas.height = Math.max(canvas.clientHeight, 1) * dpr;
     };
 
+    // The canvas has the same 16:9 shape as the frames, so nothing is cropped
     const drawCover = (img: HTMLImageElement, alpha: number) => {
       if (!img.complete || !img.naturalWidth || alpha <= 0) return;
       const cw = canvas.width;
@@ -56,8 +63,9 @@ export default function ScrollProcess() {
     const onScroll = () => {
       const rect = wrap.getBoundingClientRect();
       const total = wrap.offsetHeight - window.innerHeight;
-      const progress = Math.min(Math.max(-rect.top / total, 0), 1);
-      target = progress * (FRAME_COUNT - 1);
+      const p = Math.min(Math.max(-rect.top / total, 0), 1);
+      target = p * (FRAME_COUNT - 1);
+      setProgress(p);
     };
 
     const loop = () => {
@@ -82,26 +90,67 @@ export default function ScrollProcess() {
   return (
     <section
       ref={wrapRef}
-      id="product"
-      className="relative h-[300vh] bg-ocean-dark"
+      id="process-frames"
+      className="relative h-[400vh] bg-ocean-dark"
     >
-      <div className="sticky top-0 flex h-screen w-full flex-col overflow-hidden pt-20 md:pt-24">
-        {/* Heading above the frame */}
-        <div className="shrink-0 px-4 pb-4 text-center">
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-ocean-cyan">
-            Engineered Inside Out
-          </p>
-          <h2 className="mt-3 text-3xl sm:text-5xl font-bold text-white">
-            Precision in Every Cabinet
-          </h2>
-        </div>
+      <div className="sticky top-0 h-screen w-full overflow-hidden pt-20 md:pt-24">
+        {/* soft cyan glow */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_15%_25%,rgba(0,229,255,0.08),transparent_55%)]" />
 
-        {/* Frame area fills the remaining height */}
-        <div className="relative min-h-0 flex-1">
-          <canvas ref={canvasRef} className="block h-full w-full" />
-          <p className="pointer-events-none absolute bottom-4 inset-x-0 text-center text-xs tracking-widest uppercase text-white/40">
-            Scroll to rotate
-          </p>
+        <div className="relative mx-auto grid h-full max-w-7xl grid-cols-1 content-center items-center gap-5 px-4 pb-6 sm:px-6 lg:grid-cols-[0.85fr_1.4fr] lg:gap-10 lg:px-8">
+          {/* ───────── SECTION 1 : TEXT ───────── */}
+          <div className="order-1">
+            <h2 className="mt-4 text-3xl font-extrabold uppercase leading-[1.2] tracking-tighter text-white sm:text-5xl lg:text-5xl xl:text-6xl">
+              Precision in every cabinet
+              <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+                scroll to explore.
+              </span>
+            </h2>
+
+            <p className="mt-4 hidden max-w-md text-sm leading-relaxed text-white/70 lg:block">
+              Keep scrolling to take a cabinet apart, look at what is inside and
+              watch the finished video wall come together.
+            </p>
+
+            <button
+              onClick={() => navigate("contact")}
+              className="mt-6 inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(212,255,0,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(212,255,0,0.55)] sm:px-8 sm:py-4"
+            >
+              Request Engineering Proposal
+              <span className="h-1.5 w-1.5 rounded-full bg-black" />
+            </button>
+          </div>
+
+          {/* ───────── SECTION 2 : FRAME CARD ───────── */}
+          <div className="relative order-2">
+            <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-2 shadow-[0_0_80px_rgba(0,0,0,0.6)] sm:p-4">
+              {/* cyan top edge highlight */}
+              <div className="pointer-events-none absolute inset-x-10 top-0 z-10 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
+
+              {/* 16:9 box that always fits the screen height */}
+              <div
+                className="relative mx-auto aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black"
+                style={{ width: "min(100%, calc((100vh - 15rem) * 1.7778))" }}
+              >
+                <canvas ref={canvasRef} className="block h-full w-full" />
+
+                {/* vignette */}
+                <div className="pointer-events-none absolute inset-0 bg-[radial-linear(ellipse_at_center,transparent_60%,rgba(0,0,0,0.45)_100%)]" />
+
+                <p className="pointer-events-none absolute inset-x-0 bottom-3 text-center text-[10px] uppercase tracking-widest text-white/40 sm:text-xs">
+                  Scroll to explore
+                </p>
+
+                {/* scroll progress bar */}
+                <div className="absolute inset-x-0 bottom-0 h-0.75 bg-white/5">
+                  <div
+                    className="h-full bg-ocean-cyan"
+                    style={{ width: `${progress * 100}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
