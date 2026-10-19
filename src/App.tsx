@@ -24,6 +24,7 @@ import ScrollProgress from "./components/ScrollProgress";
 import SolutionFinder from "./components/SolutionFinder";
 import PortfolioPortal from "./components/PortfolioPortal";
 import PanIndiaDelivery from "./components/PanIndiaDelivery";
+import ScrollProcess from "./components/ScrollProcess";
 
 const LedConfigurator = lazy(() => import("./components/LedConfigurator"));
 
@@ -40,7 +41,12 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
       <PanIndiaDelivery />
     </>
   ),
-  process: <Process />,
+  process: (
+    <>
+      <Process />,
+      <ScrollProcess />,
+    </>
+  ),
   projects: <Projects />,
   about: (
     <>

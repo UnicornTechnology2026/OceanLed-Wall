@@ -1,9 +1,9 @@
 import { navigate } from "../router";
 
 export default function Hero() {
-  const scrollTo = (id: string) => {
-    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollTo = (id: string) => {
+  //   document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   return (
     <section
@@ -69,13 +69,6 @@ export default function Hero() {
           style={{ animationDelay: "0.9s" }}
           className="hero-item mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <button
-            type="button"
-            onClick={() => navigate("solutions")}
-            className="btn-shine w-full sm:w-auto rounded-full bg-linear-to-r from-ocean-blue to-ocean-cyan px-8 py-3.5 text-sm font-semibold text-ocean-dark shadow-lg shadow-ocean-blue/30 hover:shadow-ocean-cyan/50 hover:scale-[1.03] transition-all"
-          >
-            Explore Our Solutions
-          </button>
           <button
             type="button"
             onClick={() => navigate("contact")}
