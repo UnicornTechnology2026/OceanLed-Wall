@@ -41,16 +41,16 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-10 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 text-center">
         <p
           style={{ animationDelay: "0.2s" }}
-          className="hero-item mb-4 text-sm font-semibold tracking-[0.25em] uppercase text-ocean-cyan drop-shadow-sm"
+          className="hero-item mx-auto mb-4 mt-2 max-w-[18rem] px-2 text-xs font-semibold uppercase tracking-[0.15em] text-ocean-cyan drop-shadow-sm sm:mt-0 max-sm:-mt-32 sm:max-w-none sm:px-0 sm:text-sm sm:tracking-[0.25em]"
         >
           Premium LED Display Technology
         </p>
         <h1
           style={{ animationDelay: "0.4s" }}
-          className="hero-item text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1] drop-shadow-lg"
+          className="hero-item text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight tex t-white leading-[1.1] drop-shadow-lg"
         >
           BRING YOUR VISION
           <br />

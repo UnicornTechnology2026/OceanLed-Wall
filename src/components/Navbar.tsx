@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import type { MouseEvent } from "react";
 import { Menu, X, ChevronRight, Lock } from "lucide-react";
-import OceanLedLogo from "./OceanLedLogo";
 import { usePage, pageHref, navigate } from "../router";
 import type { Page } from "../router";
+import oceanLogo from "../assets/logo.png";
 
 const NAV_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
@@ -58,10 +58,10 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
         {/* Logo + name */}
         <a
           href={pageHref("home")}
-          className="group flex shrink-0 items-center gap-3"
+          className="group flex shrink-0 items-center gap-0"
         >
-          <OceanLedLogo size={40} className="shadow-none!" />
-          <span className="text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
+          <img src={oceanLogo} alt="" className="h-28 w-28" />
+          <span className="-ml-5 text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
             OCEAN LED
           </span>
         </a>

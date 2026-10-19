@@ -22,7 +22,7 @@ import type {
   AboutSettings,
   Project,
 } from "../../context/SiteSettingsContext";
-import OceanLedLogo from "../OceanLedLogo";
+import oceanLogo from "../../assets/logo.png";
 import ImageUpload from "./ImageUpload";
 
 const inputCls =
@@ -170,9 +170,9 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
 
       {/* ───────── SIDEBAR (desktop) ───────── */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-white/10 bg-ocean-dark/95 p-5 backdrop-blur-md lg:flex">
-        <div className="flex items-center gap-3 px-2 pt-1">
-          <OceanLedLogo size={40} className="shadow-none!" />
-          <div>
+        <div className="flex items-center gap-3 px-2 -mt-3.5">
+          <img src={oceanLogo} alt="" className="h-28 w-28" />
+          <div className="-ml-7">
             <p className="text-base font-extrabold uppercase leading-none tracking-wide text-white">
               OCEAN LED
             </p>
@@ -182,7 +182,7 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
           </div>
         </div>
 
-        <nav className="mt-8 flex-1 space-y-2">
+        <nav className=" flex-1 space-y-2">
           {tabs.map((t, i) => {
             const active = tab === t.id;
             return (
@@ -250,9 +250,9 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
 
       {/* ───────── TOP BAR (mobile / tablet) ───────── */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-ocean-dark/90 backdrop-blur-md lg:hidden">
-        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+        <div className=" flex h-16 items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <OceanLedLogo size={34} className="shadow-none!" />
+            <img src={oceanLogo} alt="" className="h-28 w-28" />
             <div>
               <p className="text-sm font-extrabold uppercase leading-none tracking-wide">
                 OCEAN LED
@@ -282,7 +282,7 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
           </div>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto px-4 pb-3 sm:px-6">
+        <div className="mt-2 flex gap-2 overflow-x-auto px-4 pb-3 sm:px-6">
           {tabs.map((t) => {
             const active = tab === t.id;
             return (

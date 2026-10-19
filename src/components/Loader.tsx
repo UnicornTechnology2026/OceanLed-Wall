@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import MosaicBackground from './MosaicBackground';
-import OceanLedLogo from './OceanLedLogo';
+import { useState, useEffect, useRef } from "react";
+import MosaicBackground from "./MosaicBackground";
+import oceanLogo from "../assets/logo.png";
 
 export default function Loader({ onComplete }: { onComplete?: () => void }) {
   const [progress, setProgress] = useState(0);
@@ -11,9 +11,11 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
 
   useEffect(() => {
     // Prevent scroll while loading
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     if (prefersReduced) {
       // Instant complete for reduced motion
@@ -22,13 +24,13 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
         setFading(true);
         setTimeout(() => {
           setVisible(false);
-          document.body.style.overflow = '';
+          document.body.style.overflow = "";
           onComplete?.();
         }, 400);
       }, 600);
       return () => {
         clearTimeout(timeoutRef.current);
-        document.body.style.overflow = '';
+        document.body.style.overflow = "";
       };
     }
 
@@ -47,7 +49,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
           setFading(true);
           setTimeout(() => {
             setVisible(false);
-            document.body.style.overflow = '';
+            document.body.style.overflow = "";
             onComplete?.();
           }, 700);
         }, 350);
@@ -57,7 +59,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
     return () => {
       clearInterval(intervalRef.current);
       clearTimeout(timeoutRef.current);
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [onComplete]);
 
@@ -66,7 +68,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
   return (
     <div
       className={`fixed inset-0 z-9999 flex flex-col items-center justify-center transition-opacity duration-700 ${
-        fading ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        fading ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
       aria-live="polite"
       aria-busy="true"
@@ -75,14 +77,20 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
 
       <div className="relative z-10 flex flex-col items-center px-6 text-center">
         {/* Logo */}
-        <div className="animate-fade-in-scale animate-logo-glow mb-6 opacity-0" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
-          <OceanLedLogo size={130} />
-        </div>
+        <div
+          className="animate-fade-in-scale animate-logo-glow mb-6 opacity-0"
+          style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
+        ></div>
 
         {/* Company name */}
+        <img src={oceanLogo} alt="" className="h-80 w-80" />
         <h1
-          className="animate-fade-in-up text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase opacity-0"
-          style={{ animationDelay: '0.4s', animationFillMode: 'forwards', letterSpacing: '0.08em' }}
+          className="-mt-20 animate-fade-in-up text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase opacity-0"
+          style={{
+            animationDelay: "0.4s",
+            animationFillMode: "forwards",
+            letterSpacing: "0.08em",
+          }}
         >
           OCEAN LED
         </h1>
@@ -90,7 +98,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
         {/* Subtitle */}
         <p
           className="animate-fade-in-up mt-3 text-xs sm:text-sm font-medium tracking-[0.35em] text-white/80 uppercase opacity-0"
-          style={{ animationDelay: '0.65s', animationFillMode: 'forwards' }}
+          style={{ animationDelay: "0.65s", animationFillMode: "forwards" }}
         >
           INITIALIZING OCEAN WORLD
         </p>
@@ -98,7 +106,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
         {/* Progress bar */}
         <div
           className="animate-fade-in-up mt-10 w-full max-w-132.5 opacity-0"
-          style={{ animationDelay: '0.85s', animationFillMode: 'forwards' }}
+          style={{ animationDelay: "0.85s", animationFillMode: "forwards" }}
         >
           <div className="h-1.5 w-full rounded-full bg-black/40 overflow-hidden backdrop-blur-sm">
             <div

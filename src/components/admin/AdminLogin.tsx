@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Lock, User, Eye, EyeOff, ArrowLeft, AlertCircle } from "lucide-react";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
-import OceanLedLogo from "../OceanLedLogo";
+import oceanLogo from "../../assets/logo.png";
 
 const inputCls =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] py-3 pl-11 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-ocean-cyan/50 focus:bg-ocean-cyan/[0.03] focus:ring-2 focus:ring-ocean-cyan/30";
@@ -45,13 +45,13 @@ export default function AdminLogin({
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <div className="text-center lg:text-left">
           <div className="flex items-center justify-center gap-3 lg:justify-start">
-            <OceanLedLogo size={44} className="shadow-none!" />
-            <span className="text-xl font-extrabold uppercase tracking-wide text-white">
+            <img src={oceanLogo} alt="" className="h-28 w-28" />
+            <span className="-ml-8 text-xl font-extrabold uppercase tracking-wide text-white">
               OCEAN LED
             </span>
           </div>
 
-          <span className="mt-8 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
+          <span className=" inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
             <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
             Admin Panel // Secure Access
           </span>

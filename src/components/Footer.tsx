@@ -2,9 +2,9 @@ import type { MouseEvent } from "react";
 import { ArrowUp, Mail, Phone, MapPin, ChevronRight } from "lucide-react";
 import { navigate, pageHref } from "../router";
 import type { Page } from "../router";
-import OceanLedLogo from "./OceanLedLogo";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
+import oceanLogo from "../assets/logo.png";
 
 const FOOTER_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
@@ -82,10 +82,10 @@ export default function Footer() {
             <div>
               <a
                 href={pageHref("home")}
-                className="group inline-flex items-center gap-3"
+                className="group inline-flex items-center gap-0"
               >
-                <OceanLedLogo size={44} className="shadow-none!" />
-                <span className="text-xl font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
+                <img src={oceanLogo} alt="" className="h-28 w-28" />
+                <span className="-ml-5 text-xl font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
                   OCEAN LED
                 </span>
               </a>
