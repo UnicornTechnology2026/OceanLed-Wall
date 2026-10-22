@@ -1,4 +1,4 @@
-import { navigate } from "../router";
+import { pageHref } from "../router";
 
 export default function Hero() {
   // const scrollTo = (id: string) => {
@@ -69,13 +69,12 @@ export default function Hero() {
           style={{ animationDelay: "0.9s" }}
           className="hero-item mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <button
-            type="button"
-            onClick={() => navigate("contact")}
-            className="w-full sm:w-auto rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-8 py-3.5 text-sm font-semibold text-white hover:bg-white/15 hover:border-ocean-cyan/50 transition-all"
+          <a
+            href={pageHref("contact")}
+            className="w-full sm:w-auto rounded-full text-center border border-white/25 bg-white/10 backdrop-blur-sm px-8 py-3.5 text-sm font-semibold text-white hover:bg-white/15 hover:border-ocean-cyan/50 transition-all"
           >
             Get a Quote
-          </button>
+          </a>
         </div>
       </div>
 

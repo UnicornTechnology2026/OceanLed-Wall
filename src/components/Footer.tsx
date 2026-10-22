@@ -83,7 +83,14 @@ export default function Footer() {
                 href={pageHref("home")}
                 className="group inline-flex items-center gap-0"
               >
-                <img src={oceanLogo} alt="" className="h-28 w-28" />
+                <img
+                  src={oceanLogo}
+                  alt=""
+                  width={112}
+                  height={112}
+                  loading="lazy"
+                  className="h-28 w-28"
+                />
                 <span className="-ml-5 text-xl font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
                   OCEAN LED
                 </span>

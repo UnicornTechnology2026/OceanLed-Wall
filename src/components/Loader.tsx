@@ -83,8 +83,14 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
         ></div>
 
         {/* Company name */}
-        <img src={oceanLogo} alt="" className="h-80 w-80" />
-        <h1
+        <img
+          src={oceanLogo}
+          alt=""
+          width={320}
+          height={320}
+          className="h-80 w-80"
+        />
+        <p
           className="-mt-20 animate-fade-in-up text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase opacity-0"
           style={{
             animationDelay: "0.4s",
@@ -93,8 +99,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
           }}
         >
           OCEAN LED
-        </h1>
-
+        </p>
         {/* Subtitle */}
         <p
           className="animate-fade-in-up mt-3 text-xs sm:text-sm font-medium tracking-[0.35em] text-white/80 uppercase opacity-0"

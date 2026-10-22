@@ -74,17 +74,6 @@ body {
   }
 }
 
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @keyframes progressGlow {
   0%,
   100% {
@@ -99,30 +88,8 @@ body {
   }
 }
 
-@keyframes logoGlow {
-  0%,
-  100% {
-    box-shadow:
-      0 0 30px rgba(0, 180, 255, 0.35),
-      0 0 60px rgba(0, 180, 255, 0.15);
-  }
-  50% {
-    box-shadow:
-      0 0 45px rgba(0, 229, 255, 0.5),
-      0 0 90px rgba(0, 180, 255, 0.25);
-  }
-}
-
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.animate-fade-in-scale {
-  animation: fadeInScale 0.9s ease-out forwards;
-}
-
-.animate-logo-glow {
-  animation: logoGlow 3s ease-in-out infinite;
 }
 
 .animate-progress-glow {
@@ -157,43 +124,6 @@ body {
   }
 }
 
-.led-tile-bg {
-  position: absolute;
-  inset: 0;
-  background: #000;
-  overflow: hidden;
-}
-
-.led-tile-bg::before {
-  content: "";
-  position: absolute;
-  inset: -20px;
-  background-image: linear-gradient(145deg, #00a8b8 0%, #006878 100%);
-  background-size: 58px 58px;
-  /* Creates the rounded tile look with gaps */
-  -webkit-mask-image:
-    repeating-linear-gradient(0deg, #000 0 48px, transparent 48px 58px),
-    repeating-linear-gradient(90deg, #000 0 48px, transparent 48px 58px);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    repeating-linear-gradient(0deg, #000 0 48px, transparent 48px 58px),
-    repeating-linear-gradient(90deg, #000 0 48px, transparent 48px 58px);
-  mask-composite: intersect;
-  opacity: 0.7;
-}
-
-.led-tile-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 20%,
-    rgba(0, 0, 0, 0.75) 100%
-  );
-  pointer-events: none;
-}
-
 /* ===== Scroll reveal ===== */
 .reveal {
   opacity: 0;
@@ -205,17 +135,11 @@ body {
 .reveal-up {
   transform: translateY(40px);
 }
-.reveal-down {
-  transform: translateY(-40px);
-}
 .reveal-left {
   transform: translateX(-60px);
 }
 .reveal-right {
   transform: translateX(60px);
-}
-.reveal-scale {
-  transform: scale(0.9);
 }
 .reveal.reveal-in {
   opacity: 1;
@@ -242,33 +166,6 @@ body {
   animation: textShimmer 4s linear infinite;
 }
 
-/* ===== Floating / glow blobs ===== */
-@keyframes floatY {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-}
-.animate-float {
-  animation: floatY 5s ease-in-out infinite;
-}
-
-@keyframes blobDrift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(30px, -20px) scale(1.1);
-  }
-}
-.animate-blob {
-  animation: blobDrift 12s ease-in-out infinite;
-}
-
 /* ===== Bouncing scroll cue ===== */
 @keyframes scrollCue {
   0% {
@@ -285,62 +182,6 @@ body {
 }
 .scroll-cue-dot {
   animation: scrollCue 1.8s ease-in-out infinite;
-}
-
-/* ===== Button shine sweep ===== */
-.btn-shine {
-  position: relative;
-  overflow: hidden;
-}
-.btn-shine::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.45),
-    transparent
-  );
-  transform: skewX(-20deg);
-}
-.btn-shine:hover::after {
-  animation: shine 0.8s ease;
-}
-@keyframes shine {
-  to {
-    left: 130%;
-  }
-}
-
-/* ===== Card hover lift ===== */
-.card-lift {
-  transition:
-    transform 0.4s ease,
-    box-shadow 0.4s ease,
-    border-color 0.3s,
-    background-color 0.3s;
-}
-.card-lift:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 50px rgba(0, 180, 255, 0.12);
-}
-
-/* ===== Process line draw ===== */
-@keyframes drawLine {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-.line-draw {
-  transform-origin: left;
-  animation: drawLine 1.4s ease-out 0.3s both;
 }
 
 /* Respect reduced motion for reveals */

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
-import { usePage } from "./router";
+import { usePage, installLinkHandler } from "./router";
+import { useSeo, NoIndex } from "./seo";
 import type { Page } from "./router";
 import {
   SiteSettingsProvider,
@@ -42,8 +43,8 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
   ),
   process: (
     <>
-      <Process />,
-      <ScrollProcess />,
+      <Process />
+      <ScrollProcess />
     </>
   ),
   projects: <Projects />,
@@ -61,12 +62,28 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
   ),
 };
 
+const LOADER_KEY = "ocean_loader_seen";
+
 function MainSite({ onOpenAdmin }: { onOpenAdmin: () => void }) {
-  const [loading, setLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
+  // Show the intro loader only once per browser session so returning
+  // visitors (and crawlers re-rendering pages) get content immediately.
+  const [loading, setLoading] = useState(() => {
+    try {
+      return !sessionStorage.getItem(LOADER_KEY);
+    } catch {
+      return true;
+    }
+  });
+  const [showContent, setShowContent] = useState(!loading);
   const page = usePage();
+  useSeo(page);
 
   const handleLoadComplete = useCallback(() => {
+    try {
+      sessionStorage.setItem(LOADER_KEY, "1");
+    } catch {
+      /* storage unavailable */
+    }
     setLoading(false);
     requestAnimationFrame(() => setShowContent(true));
   }, []);
@@ -117,6 +134,8 @@ function AppRoutes() {
     if (!isAdmin && view === "dashboard") setView("login");
   }, [isAdmin, view]);
 
+  useEffect(() => installLinkHandler(), []);
+
   const goAdmin = () => {
     window.location.hash = "#admin";
     setView(isAdmin ? "dashboard" : "login");
@@ -128,17 +147,25 @@ function AppRoutes() {
 
   if (view === "login") {
     return (
-      <AdminLogin
-        onSuccess={() => {
-          setView("dashboard");
-          window.location.hash = "#admin";
-        }}
-        onBack={goSite}
-      />
+      <>
+        <NoIndex />
+        <AdminLogin
+          onSuccess={() => {
+            setView("dashboard");
+            window.location.hash = "#admin";
+          }}
+          onBack={goSite}
+        />
+      </>
     );
   }
   if (view === "dashboard") {
-    return <AdminDashboard onBack={goSite} />;
+    return (
+      <>
+        <NoIndex />
+        <AdminDashboard onBack={goSite} />
+      </>
+    );
   }
   return <MainSite onOpenAdmin={goAdmin} />;
 }
