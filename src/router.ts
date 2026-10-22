@@ -5,7 +5,7 @@ export const PAGES = [
   "process",
   "projects",
   "about",
-  "faq",
+
   "contact",
 ] as const;
 

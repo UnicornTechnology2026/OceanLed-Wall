@@ -17,7 +17,6 @@ import Footer from "./components/Footer";
 import AdminLogin from "./components/admin/AdminLogin";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import Process from "./components/Process";
-import FAQ from "./components/FAQ";
 import OfficeMap from "./components/OfficeMap";
 import ScrollProduct from "./components/ScrollProduct";
 import ScrollProgress from "./components/ScrollProgress";
@@ -54,7 +53,6 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
       <WhyOceanLed />
     </>
   ),
-  faq: <FAQ />,
   contact: (
     <>
       <Contact />

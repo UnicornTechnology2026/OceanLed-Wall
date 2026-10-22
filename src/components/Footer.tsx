@@ -11,7 +11,6 @@ const FOOTER_LINKS: { label: string; page: Page }[] = [
   { label: "Process", page: "process" },
   { label: "Projects", page: "projects" },
   { label: "About Us", page: "about" },
-  { label: "FAQ", page: "faq" },
   { label: "Contact", page: "contact" },
 ];
 

@@ -46,15 +46,6 @@ export default function PanIndiaDelivery() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 md:py-28 lg:py-36">
         <div className="max-w-xl">
-          <Reveal>
-            <div className="inline-flex items-center gap-2 rounded-full border border-ocean-cyan/20 bg-ocean-cyan/5 px-4 py-1.5 mb-5 backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-ocean-cyan animate-pulse" />
-              <p className="text-xs font-semibold tracking-[0.2em] uppercase text-ocean-cyan">
-                Delivery Network
-              </p>
-            </div>
-          </Reveal>
-
           <Reveal delay={100}>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.05]">
               We Deliver{" "}

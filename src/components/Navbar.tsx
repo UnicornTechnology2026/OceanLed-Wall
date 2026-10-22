@@ -10,7 +10,6 @@ const NAV_LINKS: { label: string; page: Page }[] = [
   { label: "Process", page: "process" },
   { label: "Projects", page: "projects" },
   { label: "About Us", page: "about" },
-  { label: "FAQ", page: "faq" },
   { label: "Contact", page: "contact" },
 ];
 
@@ -58,7 +57,7 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
         {/* Logo + name */}
         <a
           href={pageHref("home")}
-          className="group flex shrink-0 items-center gap-0"
+          className="group flex shrink-0 items-center gap-0 outline-none focus:outline-none focus-visible:outline-none [-webkit-tap-highlight-color:transparent]"
         >
           <img src={oceanLogo} alt="" className="h-28 w-28" />
           <span className="-ml-5 text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
