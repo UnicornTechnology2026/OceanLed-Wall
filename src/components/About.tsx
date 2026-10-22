@@ -32,16 +32,9 @@ const HIGHLIGHTS = [
   },
 ];
 
-const TAGS = [
-  "Pan-India Service",
-  "2-Year Warranty",
-  "24/7 Support",
-  "Custom Design",
-];
-
 export default function About() {
   const { settings } = useSiteSettings();
-  const { image, since, projects, cities } = settings.about;
+  const { image, since, projects } = settings.about;
 
   const goContact = (e: MouseEvent) => {
     e.preventDefault();
@@ -60,17 +53,10 @@ export default function About() {
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.25fr] lg:gap-14 lg:px-8">
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <div>
-          <Reveal>
-            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
-              <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
-              About Us // Ocean LED
-            </span>
-          </Reveal>
-
           <Reveal delay={100}>
             <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               Illuminating spaces
-              <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+              <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 with precision.
               </span>
             </h2>
@@ -92,19 +78,6 @@ export default function About() {
               approached with attention to detail, from pixel pitch selection to
               system integration.
             </p>
-          </Reveal>
-
-          <Reveal delay={300}>
-            <div className="mt-6 flex flex-wrap gap-2.5">
-              {TAGS.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-white/10 bg-white/3 px-4 py-1.5 text-xs font-medium text-white/60"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
           </Reveal>
 
           <Reveal delay={350}>
@@ -135,33 +108,29 @@ export default function About() {
               />
               <div className="absolute inset-0 bg-linear-to-tr from-ocean-dark/70 via-ocean-dark/20 to-ocean-blue/20" />
 
-              <div className="absolute inset-x-4 bottom-4 flex items-center justify-between rounded-xl border border-white/10 bg-black/50 px-5 py-3 backdrop-blur-xl">
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-white/50">
-                    Since
-                  </p>
-                  <p className="text-lg font-bold text-white">
-                    <CountUp value={since} />
-                  </p>
-                </div>
-                <div className="h-8 w-px bg-white/10" />
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-white/50">
-                    Projects
-                  </p>
-                  <p className="text-lg font-bold text-ocean-cyan">
-                    <CountUp value={projects} />
-                  </p>
-                </div>
-                <div className="h-8 w-px bg-white/10" />
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-white/50">
-                    Cities
-                  </p>
-                  <p className="text-lg font-bold text-white">
-                    <CountUp value={cities} />
-                  </p>
-                </div>
+              <div className="absolute inset-x-4 bottom-4 flex items-stretch rounded-xl border border-white/10 bg-black/50 py-3 backdrop-blur-xl">
+                {[
+                  { label: "Since", value: since, accent: false },
+                  { label: "Projects", value: projects, accent: true },
+                ]
+                  .filter((stat) => String(stat.value ?? "").trim() !== "")
+                  .map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="min-w-0 flex-1 border-l border-white/10 px-2 text-center first:border-l-0"
+                    >
+                      <p className="text-[10px] uppercase tracking-wider text-white/50">
+                        {stat.label}
+                      </p>
+                      <p
+                        className={`text-lg font-bold ${
+                          stat.accent ? "text-ocean-cyan" : "text-white"
+                        }`}
+                      >
+                        <CountUp value={stat.value} />
+                      </p>
+                    </div>
+                  ))}
               </div>
             </div>
 

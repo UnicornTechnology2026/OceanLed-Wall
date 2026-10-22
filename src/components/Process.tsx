@@ -48,13 +48,6 @@ export default function Process() {
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.25fr] lg:gap-14 lg:px-8">
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <div>
-          <Reveal>
-            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
-              <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
-              How We Work // 4 Simple Steps
-            </span>
-          </Reveal>
-
           <Reveal delay={100}>
             <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               From idea to illumination

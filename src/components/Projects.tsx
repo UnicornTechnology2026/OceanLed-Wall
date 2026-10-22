@@ -11,7 +11,7 @@ const ALL = "All";
 export default function Projects() {
   const { settings } = useSiteSettings();
   const projects = settings.projects;
-  const { since, projects: projectCount, cities } = settings.about;
+  const { since, projects: projectCount } = settings.about;
 
   const [active, setActive] = useState(ALL);
 
@@ -31,7 +31,6 @@ export default function Projects() {
   const STATS = [
     { label: "Since", value: since },
     { label: "Projects Delivered", value: projectCount },
-    { label: "Cities Covered", value: cities },
   ];
 
   return (
@@ -48,18 +47,11 @@ export default function Projects() {
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-14">
           {/* Text */}
           <div>
-            <Reveal>
-              <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
-                <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
-                Our Work // Featured Projects
-              </span>
-            </Reveal>
-
             <Reveal delay={100}>
               <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
-                Selected
-                <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
-                  work across India.
+                Trusted
+                <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+                  Across Every Region.
                 </span>
               </h2>
             </Reveal>
@@ -89,7 +81,7 @@ export default function Projects() {
             <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] sm:p-8">
               <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {STATS.map((s, i) => (
                   <Reveal key={s.label} delay={i * 120}>
                     <div className="h-full rounded-xl border border-white/10 bg-white/3 p-5 text-center transition hover:-translate-y-0.5 hover:border-ocean-cyan/40 hover:bg-ocean-cyan/4">

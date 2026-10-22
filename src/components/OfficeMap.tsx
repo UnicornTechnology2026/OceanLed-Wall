@@ -6,10 +6,16 @@ export default function OfficeMap() {
   const { settings } = useSiteSettings();
   const { address } = settings.contact;
 
-  const query = encodeURIComponent(address);
-  const embedUrl =
-    "https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d232.60584241849477!2d79.12758559698811!3d21.12478318410645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s%20Ramna%20Maroti%20Nagar-Ishwar%20Nagar!5e0!3m2!1sen!2sin!4v1791976707134!5m2!1sen!2sin";
-  const openUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  // remove these
+  // Exact office location (Ramna Maroti Nagar, Nagpur). Using coordinates makes the
+  // map and directions land on the office even if the typed address is not found.
+  const OFFICE_LAT_LNG = "21.1247832,79.1275856";
+
+  // Embedded map pinned to the office
+  const embedUrl = `https://www.google.com/maps?q=${OFFICE_LAT_LNG}&z=17&output=embed`;
+
+  // "Get Directions" opens Google Maps with the office as the destination
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${OFFICE_LAT_LNG}`;
 
   return (
     <section
@@ -39,7 +45,7 @@ export default function OfficeMap() {
               </div>
 
               <a
-                href={openUrl}
+                href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-3 rounded-md bg-ocean-cyan px-6 py-3 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"

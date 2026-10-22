@@ -93,13 +93,13 @@ export default function ScrollProcess() {
       id="process-frames"
       className="relative h-[400vh] bg-ocean-dark"
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden pt-20 md:pt-24">
+      <div className="sticky top-0 h-screen w-full overflow-hidden md:pt-24 lg:h-screen">
         {/* soft cyan glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_15%_25%,rgba(0,229,255,0.08),transparent_55%)]" />
 
-        <div className="relative mx-auto grid h-full max-w-7xl grid-cols-1 content-center items-center gap-5 px-4 pb-6 sm:px-6 lg:grid-cols-[0.85fr_1.4fr] lg:gap-10 lg:px-8">
+        <div className="relative mx-auto grid h-full max-w-7xl grid-cols-1 content-center items-center gap-5 px-4 pb-0 sm:px-6 lg:grid-cols-[0.85fr_1.4fr] lg:gap-10 lg:px-8">
           {/* ───────── SECTION 1 : TEXT ───────── */}
-          <div className="order-1">
+          <div className="order-1 -translate-y-8 lg:translate-y-0">
             <h2 className="mt-4 text-3xl font-extrabold uppercase leading-[1.2] tracking-tighter text-white sm:text-5xl lg:text-5xl xl:text-6xl">
               Precision in every cabinet
               <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
@@ -129,7 +129,7 @@ export default function ScrollProcess() {
 
               {/* 16:9 box that always fits the screen height */}
               <div
-                className="relative mx-auto aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black"
+                className="relative mx-auto aspect-5/4 md:aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black"
                 style={{ width: "min(100%, calc((100vh - 15rem) * 1.7778))" }}
               >
                 <canvas ref={canvasRef} className="block h-full w-full" />

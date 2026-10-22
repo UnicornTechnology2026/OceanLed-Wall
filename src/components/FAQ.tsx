@@ -7,23 +7,19 @@ import { navigate, pageHref } from "../router";
 const FAQS = [
   {
     q: "What is the price per sq ft of an LED display?",
-    a: "Pricing depends on pixel pitch, indoor or outdoor use, brightness, and screen size. Indoor fine-pitch screens cost more than outdoor large-pitch screens. Share your requirements through the contact form and we will send a detailed quote.",
+    a: "Pricing varies based on pixel pitch, brightness, and screen dimensions. Share your project requirements through our contact form, and our team will provide a customized quote tailored to your needs.",
   },
   {
     q: "How long does delivery and installation take?",
-    a: "Standard screens are typically delivered within [X–Y] weeks of order confirmation. Custom or large installations may take longer. We will give you a clear timeline in your quote.",
+    a: "Delivery timelines depend on your screen specifications and project requirements. Our team will provide an estimated delivery schedule along with your quotation, ensuring a smooth and timely installation process.",
   },
   {
     q: "What warranty do you provide?",
-    a: "All our displays come with a [2-year] warranty covering manufacturing defects in LED modules, power supplies, and control systems. Extended warranty options are available.",
-  },
-  {
-    q: "Do you offer an AMC (Annual Maintenance Contract)?",
-    a: "Yes. Our AMC covers scheduled inspections, cleaning, firmware updates, and priority repair support, so your screen stays reliable after the warranty period.",
+    a: "All our displays come with warranty coverage for manufacturing defects in LED modules, power supplies, and control systems. Extended warranty options are also available for added peace of mind.",
   },
   {
     q: "How much power does an LED display consume?",
-    a: "Consumption varies by size, brightness, and content. As a rough guide, indoor screens use around [X] W per sq ft on average, and outdoor screens use more because of higher brightness. We will give you exact power figures for your project.",
+    a: "Power consumption depends on screen size, brightness settings, and displayed content. Our team will provide detailed power requirements and estimated energy consumption based on your specific project.",
   },
 ];
 
@@ -47,13 +43,6 @@ export default function FAQ() {
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.25fr] lg:gap-14 lg:px-8">
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <div className="lg:sticky lg:top-28">
-          <Reveal>
-            <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
-              <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
-              FAQ // Quick Answers
-            </span>
-          </Reveal>
-
           <Reveal delay={100}>
             <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               Frequently asked

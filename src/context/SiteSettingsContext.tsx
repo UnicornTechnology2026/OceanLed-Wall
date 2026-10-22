@@ -66,7 +66,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
     email: "oceanled2812@gmail.com",
     phone: "+91 90112 40214",
     address:
-      "Plot No. 109-A, Near Hanuman Mandir, Ramna Maroti Nagar, Nagpur, Maharashtra 440024",
+      "Plot No. 109/A, Near Hanuman Mandir, Ramna Maroti Nagar, Nagpur, Maharashtra 440024",
   },
   about: {
     image:
@@ -136,7 +136,20 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<SiteSettings>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+      if (saved) {
+        const merged = {
+          ...DEFAULT_SETTINGS,
+          ...JSON.parse(saved),
+        } as SiteSettings;
+        // Browsers that saved the old placeholder address get the new office address
+        if (merged.contact?.address === "Nagpur, Maharashtra, India") {
+          merged.contact = {
+            ...merged.contact,
+            address: DEFAULT_SETTINGS.contact.address,
+          };
+        }
+        return merged;
+      }
     } catch {
       /* ignore */
     }
