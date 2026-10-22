@@ -60,7 +60,7 @@ export default function Hero() {
         </h1>
         <p
           style={{ animationDelay: "0.65s" }}
-          className="hero-item mt-6 max-w-2xl mx-auto text-base sm:text-lg text-white/80 leading-relaxed drop-shadow-sm"
+          className="hero-item mt-6 max-w-2xl mx-auto text-base sm:text-lg text-white leading-relaxed drop-shadow-sm"
         >
           Discover innovative LED display solutions engineered to transform
           spaces, elevate experiences, and make every visual unforgettable.

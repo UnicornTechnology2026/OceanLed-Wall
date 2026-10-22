@@ -151,13 +151,13 @@ export default function ScrollProduct() {
           {/* ───────── SECTION 1 : TEXT ───────── */}
           <div className="order-1 flex flex-col items-start">
             <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
-              High-Luminance Commercial Displays
-              <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
-                Built to eliminate downtime.
+              High-Performance LED Display Solutions
+              <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+                Performance That Never Pauses.
               </span>
             </h2>
 
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/75 sm:text-lg">
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white sm:text-lg">
               Direct-view LED architecture designed for continuous 24/7
               mission-critical operations, harsh ambient sunlight, and ultra-low
               maintenance overhead.

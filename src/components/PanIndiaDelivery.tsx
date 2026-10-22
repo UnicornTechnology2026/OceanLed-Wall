@@ -1,36 +1,14 @@
 import Reveal from "./Reveal";
 import { navigate, pageHref } from "../router";
-import { useSiteSettings } from "../context/SiteSettingsContext";
 import type { MouseEvent } from "react";
 import TruckImg from "../assets/oceanTruck.png";
-
-const CITIES = [
-  "Mumbai",
-  "Delhi",
-  "Bengaluru",
-  "Hyderabad",
-  "Chennai",
-  "Kolkata",
-  "Pune",
-  "Ahmedabad",
-  "Jaipur",
-  "Nagpur",
-];
+import TruckMobileImg from "../assets/mobileview.jpeg";
 
 export default function PanIndiaDelivery() {
-  const { settings } = useSiteSettings();
-  const { projects, cities } = settings.about;
-
   const goContact = (e: MouseEvent) => {
     e.preventDefault();
     navigate("contact");
   };
-
-  const stats = [
-    { value: projects, label: "Projects Delivered" },
-    { value: cities, label: "Cities Covered" },
-    { value: "7 Days", label: "Avg. Dispatch Time" },
-  ];
 
   return (
     <section
@@ -49,16 +27,19 @@ export default function PanIndiaDelivery() {
         @media (prefers-reduced-motion: reduce) { .pi-bg, .pi-road { animation: none } }
       `}</style>
 
-      {/* Background photo (truck stays on the right, even on mobile) */}
-      <img
-        src={TruckImg}
-        alt="Ocean LED Video Wall delivery truck on the highway"
-        loading="lazy"
-        className="pi-bg pt-12 absolute inset-0 -z-20 h-full w-full object-cover object-[78%_center]"
-      />
+      {/* Background photo: portrait image on mobile, wide image from md up */}
+      <picture>
+        <source media="(min-width: 768px)" srcSet={TruckImg} />
+        <img
+          src={TruckMobileImg}
+          alt="Ocean LED Video Wall delivery truck on the highway"
+          loading="lazy"
+          className="pi-bg md:pt-12 absolute inset-0 -z-20 w-full h-full object-cover object-center md:object-[78%_center]"
+        />
+      </picture>
 
       {/* Readability overlays */}
-      <div className="absolute inset-0 -z-10 bg-ocean-dark/65 md:bg-transparent" />
+      <div className="absolute inset-0 -z-10 bg-ocean-dark/50 md:bg-transparent" />
       <div className="absolute inset-0 -z-10 hidden md:block bg-linear-to-r from-ocean-dark via-ocean-dark/75 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-linear-to-t from-ocean-dark to-transparent" />
       <div className="absolute inset-x-0 top-0 -z-10 h-24 bg-linear-to-b from-ocean-dark to-transparent" />
@@ -84,47 +65,11 @@ export default function PanIndiaDelivery() {
           </Reveal>
 
           <Reveal delay={200}>
-            <p className="mt-5 text-base sm:text-lg text-white/70 leading-relaxed">
-              From Kashmir to Kanyakumari, our trucks carry LED video walls,
-              cabinets and control systems right to your venue, safely packed,
-              tracked and delivered on schedule.
+            <p className="mt-5 text-base sm:text-lg text-white leading-relaxed">
+              From every corner of India, we deliver LED video walls, display
+              cabinets and control systems to your venue with secure packaging,
+              reliable tracking and on-time delivery.
             </p>
-          </Reveal>
-
-          {/* Stats */}
-          <Reveal delay={300}>
-            <div className="mt-8 grid grid-cols-3 gap-4 max-w-md">
-              {stats.map((s) => (
-                <div
-                  key={s.label}
-                  className="border-l border-ocean-cyan/30 pl-4"
-                >
-                  <p className="text-2xl sm:text-3xl font-bold text-white">
-                    {s.value}
-                  </p>
-                  <p className="mt-1 text-[11px] sm:text-xs text-white/55 leading-snug">
-                    {s.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-
-          {/* City chips */}
-          <Reveal delay={400}>
-            <div className="mt-8 flex flex-wrap gap-2">
-              {CITIES.map((c) => (
-                <span
-                  key={c}
-                  className="rounded-full border border-white/10 bg-black/30 backdrop-blur-md px-3 py-1 text-xs text-white/75"
-                >
-                  {c}
-                </span>
-              ))}
-              <span className="rounded-full border border-ocean-cyan/30 bg-ocean-cyan/10 px-3 py-1 text-xs font-semibold text-ocean-cyan">
-                + many more
-              </span>
-            </div>
           </Reveal>
 
           <Reveal delay={500}>

@@ -57,7 +57,7 @@ export default function Footer() {
                 </span>
                 <h2 className="mt-4 text-2xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl">
                   Ready to light up
-                  <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+                  <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                     your space?
                   </span>
                 </h2>
@@ -89,23 +89,11 @@ export default function Footer() {
                   OCEAN LED
                 </span>
               </a>
-              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/55">
+              <p className="-mt-6 max-w-sm text-sm leading-relaxed text-white/65">
                 Premium LED display solutions for spaces that demand visual
-                excellence. Indoor and outdoor screens, video walls and digital
-                signage, delivered across India.
+                excellence. Video walls, digital signage and customized display
+                systems, delivered across India.
               </p>
-              <div className="mt-5 flex flex-wrap gap-2.5">
-                {["Pan-India Service", "2-Year Warranty", "24/7 Support"].map(
-                  (tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-white/10 bg-white/3 px-3.5 py-1.5 text-[11px] font-medium text-white/60"
-                    >
-                      {tag}
-                    </span>
-                  ),
-                )}
-              </div>
             </div>
           </Reveal>
 
