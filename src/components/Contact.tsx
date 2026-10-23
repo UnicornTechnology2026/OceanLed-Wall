@@ -269,7 +269,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-md bg-ocean-cyan px-8 py-4 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 sm:w-auto"
+                  className="btn btn-primary w-full"
                 >
                   {submitting ? (
                     "Sending..."

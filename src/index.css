@@ -196,3 +196,21 @@ body {
     animation: none;
   }
 }
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-3 rounded-md px-6 py-3.5 text-sm font-bold uppercase tracking-wide transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-cyan;
+  }
+  .btn-sm {
+    @apply px-5 py-3 text-xs;
+  }
+  .btn-primary {
+    @apply bg-ocean-cyan text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
+  }
+  .btn-secondary {
+    @apply border border-white/20 bg-white/4 text-white hover:-translate-y-0.5 hover:border-ocean-cyan/50 hover:text-ocean-cyan;
+  }
+  .btn-icon {
+    @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-ocean-cyan/50 hover:text-ocean-cyan focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-cyan;
+  }
+}

@@ -65,7 +65,7 @@ export default function Footer() {
               <a
                 href={pageHref("contact")}
                 onClick={goContact}
-                className="inline-flex shrink-0 items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)] sm:px-8 sm:py-4"
+                className="btn btn-primary shrink-0"
               >
                 Get a Free Quote
                 <span className="h-1.5 w-1.5 rounded-full bg-black" />
@@ -106,9 +106,9 @@ export default function Footer() {
           {/* Navigation */}
           <Reveal delay={100}>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-ocean-cyan">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-ocean-cyan">
                 Navigate
-              </h4>
+              </h3>
               <ul className="mt-5 space-y-3">
                 {FOOTER_LINKS.map((link) => (
                   <li key={link.label}>
@@ -131,9 +131,9 @@ export default function Footer() {
           {/* Contact */}
           <Reveal delay={200} className="md:col-span-2 lg:col-span-1">
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-ocean-cyan">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-ocean-cyan">
                 Contact
-              </h4>
+              </h3>
               <div className="mt-5 space-y-3">
                 {INFO.map((item) => {
                   const content = (
@@ -180,7 +180,7 @@ export default function Footer() {
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Back to top"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan transition hover:-translate-y-0.5 hover:border-ocean-cyan hover:bg-ocean-cyan hover:text-black"
+            className="btn-icon"
           >
             <ArrowUp size={16} strokeWidth={2.5} />
           </button>

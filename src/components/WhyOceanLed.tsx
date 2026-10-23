@@ -72,7 +72,7 @@ export default function WhyOceanLed() {
             <a
               href={pageHref("contact")}
               onClick={goContact}
-              className="mt-8 inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)] sm:px-8 sm:py-4"
+              className="btn btn-primary mt-8 sm:px-8 sm:py-4"
             >
               Get a Free Quote
               <span className="h-1.5 w-1.5 rounded-full bg-black" />

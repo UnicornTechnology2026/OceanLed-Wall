@@ -71,7 +71,7 @@ export default function Hero() {
         >
           <a
             href={pageHref("contact")}
-            className="w-full sm:w-auto rounded-full text-center border border-white/25 bg-white/10 backdrop-blur-sm px-8 py-3.5 text-sm font-semibold text-white hover:bg-white/15 hover:border-ocean-cyan/50 transition-all"
+            className="btn btn-primary w-full sm:w-auto"
           >
             Get a Quote
           </a>

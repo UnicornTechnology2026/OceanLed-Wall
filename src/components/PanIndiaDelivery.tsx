@@ -67,7 +67,7 @@ export default function PanIndiaDelivery() {
             <a
               href={pageHref("contact")}
               onClick={goContact}
-              className="mt-9 inline-flex items-center gap-2 rounded-full bg-linear-to-r from-ocean-cyan to-ocean-blue px-7 py-3 text-sm font-semibold text-ocean-dark transition-all duration-300 hover:shadow-[0_0_35px_rgba(0,229,255,0.45)] hover:-translate-y-0.5"
+              className="btn btn-primary mt-9"
             >
               Get a Delivery Quote <span aria-hidden>→</span>
             </a>
