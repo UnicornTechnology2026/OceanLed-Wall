@@ -87,7 +87,7 @@ export default function Contact() {
         {/* ───────── SECTION 1 : TEXT + INFO ───────── */}
         <div className="lg:sticky lg:top-28">
           <Reveal delay={100}>
-            <h1 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               Start your
               <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 project today.

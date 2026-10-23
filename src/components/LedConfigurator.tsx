@@ -646,7 +646,7 @@ export default function LedConfigurator() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ───────── INTRO ───────── */}
         <Reveal>
-          <h2 className="mt-5 max-w-4xl text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+          <h2 className="mt-5 max-w-4xl text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
             Design your LED display
             <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
               see it before you build it.
