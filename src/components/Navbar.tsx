@@ -59,14 +59,16 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
           href={pageHref("home")}
           className="group flex shrink-0 items-center gap-0 outline-none focus:outline-none focus-visible:outline-none [-webkit-tap-highlight-color:transparent]"
         >
-          <img
-            src={oceanLogo}
-            alt="OCEAN LED logo"
-            width={112}
-            height={112}
-            className="h-28 w-28"
-          />
-          <span className="-ml-5 text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
+          <span className="relative block aspect-223/209 h-12 shrink-0 overflow-hidden md:h-14 filter-[drop-shadow(0_0_1px_rgba(255,255,255,0.9))_drop-shadow(0_0_8px_rgba(255,255,255,0.35))]">
+            <img
+              src={oceanLogo}
+              alt=""
+              width={500}
+              height={500}
+              className="absolute left-[-62.8%] top-[-69.9%] w-[224.2%] max-w-none"
+            />
+          </span>
+          <span className=" ml-2.5 text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
             OCEAN LED
           </span>
         </a>

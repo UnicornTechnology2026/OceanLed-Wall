@@ -78,20 +78,22 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
       <div className="relative z-10 flex flex-col items-center px-6 text-center">
         {/* Logo */}
         <div
-          className="animate-fade-in-scale animate-logo-glow mb-6 opacity-0"
+          className="animate-fade-in-scale mb-6 rounded-full bg-ocean-dark/85 p-5 opacity-0 backdrop-blur-sm"
           style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
-        ></div>
+        >
+          <span className="animate-logo-glow relative block aspect-223/209 h-32 overflow-hidden sm:h-40">
+            <img
+              src={oceanLogo}
+              alt=""
+              width={500}
+              height={500}
+              className="absolute left-[-62.8%] top-[-69.9%] w-[224.2%] max-w-none"
+            />
+          </span>
+        </div>
 
-        {/* Company name */}
-        <img
-          src={oceanLogo}
-          alt=""
-          width={320}
-          height={320}
-          className="h-80 w-80"
-        />
         <p
-          className="-mt-20 animate-fade-in-up text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase opacity-0"
+          className="animate-fade-in-up text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white uppercase opacity-0"
           style={{
             animationDelay: "0.4s",
             animationFillMode: "forwards",
