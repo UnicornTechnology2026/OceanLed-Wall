@@ -698,7 +698,7 @@ export default function LedConfigurator() {
                 <button
                   type="button"
                   onClick={resetView}
-                  className="absolute bottom-3 right-4 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/60 transition-colors hover:text-ocean-cyan"
+                  className="btn-choice absolute bottom-3 right-4 gap-1.5 px-3 py-1.5 text-xs"
                 >
                   <RotateCcw size={12} /> Reset view
                 </button>
@@ -764,11 +764,7 @@ export default function LedConfigurator() {
                         type="button"
                         aria-pressed={config.shape === s.key}
                         onClick={() => set("shape", s.key)}
-                        className={`flex items-start gap-2.5 rounded-xl border p-3 text-left transition hover:-translate-y-0.5 ${
-                          config.shape === s.key
-                            ? "border-ocean-cyan/60 bg-ocean-cyan/10"
-                            : "border-white/10 bg-white/3 hover:border-ocean-cyan/40"
-                        }`}
+                        className="btn-choice items-start gap-2.5 p-3 text-left"
                       >
                         <s.icon
                           size={18}
@@ -887,7 +883,7 @@ export default function LedConfigurator() {
                         type="button"
                         aria-pressed={config.pitch === p}
                         onClick={() => set("pitch", p)}
-                        className={chipClass(config.pitch === p)}
+                        className="btn-choice px-3 py-2 text-sm"
                       >
                         P{p}
                       </button>

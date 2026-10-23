@@ -188,7 +188,7 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
                   setOpen(false);
                   onOpenAdmin();
                 }}
-                className="mx-auto mt-4 flex items-center gap-2 text-xs uppercase tracking-wider text-white/30 transition hover:text-ocean-cyan"
+                className="btn-link mx-auto mt-4"
               >
                 <Lock size={12} />
                 Admin

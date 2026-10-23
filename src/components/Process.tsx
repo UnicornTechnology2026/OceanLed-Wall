@@ -49,12 +49,12 @@ export default function Process() {
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <div>
           <Reveal delay={100}>
-            <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               From idea to illumination
               <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 in four clear steps.
               </span>
-            </h2>
+            </h1>
           </Reveal>
 
           <Reveal delay={200}>

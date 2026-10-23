@@ -87,12 +87,12 @@ export default function Contact() {
         {/* ───────── SECTION 1 : TEXT + INFO ───────── */}
         <div className="lg:sticky lg:top-28">
           <Reveal delay={100}>
-            <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               Start your
               <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 project today.
               </span>
-            </h2>
+            </h1>
           </Reveal>
 
           <Reveal delay={200}>
@@ -147,9 +147,9 @@ export default function Contact() {
                 <span className="flex h-16 w-16 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan shadow-[0_0_30px_rgba(0,229,255,0.25)]">
                   <CheckCircle size={30} strokeWidth={1.75} />
                 </span>
-                <h3 className="mt-5 text-xl font-bold uppercase tracking-wide text-white">
+                <h2 className="mt-5 text-xl font-bold text-white">
                   Message Received
-                </h3>
+                </h2>
                 <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/55">
                   Thank you for reaching out. Our team will get back to you
                   shortly.
@@ -168,9 +168,9 @@ export default function Contact() {
                   <p className="text-xs font-medium uppercase tracking-wider text-white/40">
                     Inquiry Form
                   </p>
-                  <h3 className="mt-0.5 text-lg font-bold uppercase tracking-wide text-white">
+                  <h2 className="mt-0.5 text-lg font-bold text-white">
                     Tell us about your project
-                  </h3>
+                  </h2>
                 </div>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">

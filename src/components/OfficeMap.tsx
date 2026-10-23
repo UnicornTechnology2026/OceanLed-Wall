@@ -35,7 +35,7 @@ export default function OfficeMap() {
                   <MapPin size={20} strokeWidth={1.75} />
                 </span>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-white/40">
+                  <p className="text-xs font-medium text-white/50">
                     Visit Our Office
                   </p>
                   <p className="mt-0.5 text-sm font-semibold text-white/80 sm:text-base">

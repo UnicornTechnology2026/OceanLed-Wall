@@ -199,7 +199,7 @@ body {
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-3 rounded-md px-6 py-3.5 text-sm font-bold uppercase tracking-wide transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-cyan;
+    @apply inline-flex items-center justify-center gap-3 rounded-md px-6 py-3.5 text-sm font-bold tracking-wide transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-cyan;
   }
   .btn-sm {
     @apply px-5 py-3 text-xs;
@@ -212,5 +212,13 @@ body {
   }
   .btn-icon {
     @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-ocean-cyan/50 hover:text-ocean-cyan focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-cyan;
+  }
+
+  .btn-choice {
+    @apply inline-flex items-center rounded-xl border border-white/10 bg-white/3 text-white/70 transition hover:border-ocean-cyan/40 aria-pressed:border-ocean-cyan/60 aria-pressed:bg-ocean-cyan/10 aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-cyan;
+  }
+  /* Text-only action (Back, Skip, Start over, Reset) */
+  .btn-link {
+    @apply inline-flex items-center gap-1.5 text-sm font-medium text-white/70 transition-colors hover:text-ocean-cyan hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean-cyan;
   }
 }

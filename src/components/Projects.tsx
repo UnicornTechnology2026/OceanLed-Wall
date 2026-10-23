@@ -48,7 +48,7 @@ export default function Projects() {
           {/* Text */}
           <div>
             <Reveal delay={100}>
-              <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+              <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
                 Trusted
                 <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                   Across Every Region.
@@ -165,9 +165,9 @@ export default function Projects() {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0">
-                    <h3 className="text-base font-bold uppercase leading-snug tracking-wide text-white transition-colors duration-300 group-hover:text-ocean-cyan">
+                    <h2 className="text-base font-bold uppercase leading-snug tracking-wide text-white transition-colors duration-300 group-hover:text-ocean-cyan">
                       {project.title}
-                    </h3>
+                    </h2>
                     <p className="mt-1 flex items-center gap-1.5 text-xs text-white/45">
                       <MapPin size={12} className="shrink-0 text-ocean-cyan" />
                       {project.location}, India

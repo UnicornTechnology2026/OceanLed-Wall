@@ -54,12 +54,12 @@ export default function About() {
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <div>
           <Reveal delay={100}>
-            <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               Illuminating spaces
-              <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
+              <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 with precision.
               </span>
-            </h2>
+            </h1>
           </Reveal>
 
           <Reveal delay={200}>
@@ -119,7 +119,7 @@ export default function About() {
                       key={stat.label}
                       className="min-w-0 flex-1 border-l border-white/10 px-2 text-center first:border-l-0"
                     >
-                      <p className="text-[10px] uppercase tracking-wider text-white/50">
+                      <p className="text-xs uppercase tracking-wider text-white/50">
                         {stat.label}
                       </p>
                       <p

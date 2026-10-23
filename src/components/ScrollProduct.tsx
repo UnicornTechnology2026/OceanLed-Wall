@@ -150,7 +150,7 @@ export default function ScrollProduct() {
         <div className="relative mx-auto grid h-full max-w-7xl grid-cols-1 items-center gap-6 px-4 pb-6 sm:px-6 lg:grid-cols-[1fr_1.45fr] lg:gap-10 lg:px-8">
           {/* ───────── SECTION 1 : TEXT ───────── */}
           <div className="order-1 flex flex-col items-start">
-            <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+            <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
               High-Performance LED Display Solutions
               <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 Performance That Never Pauses.
@@ -183,7 +183,7 @@ export default function ScrollProduct() {
               {/* vignette */}
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.55)_100%)]" />
 
-              <p className="pointer-events-none absolute inset-x-0 bottom-4 text-center text-[10px] uppercase tracking-widest text-white/40 sm:text-xs">
+              <p className="pointer-events-none absolute inset-x-0 bottom-3 text-center text-xs text-white/60">
                 Scroll to rotate
               </p>
 

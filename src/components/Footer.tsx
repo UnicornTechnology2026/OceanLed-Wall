@@ -50,11 +50,11 @@ export default function Footer() {
 
             <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
               <div>
-                <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
+                <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-xs font-medium text-white/70 sm:text-sm">
                   <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
-                  Let's Talk // Free Quote
+                  Let’s talk — free quote
                 </span>
-                <h2 className="mt-4 text-2xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl">
+                <h2 className="mt-4 text-2xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-4xl">
                   Ready to light up
                   <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                     your space?
@@ -142,7 +142,7 @@ export default function Footer() {
                         <item.icon size={18} strokeWidth={1.75} />
                       </span>
                       <span className="block min-w-0">
-                        <span className="block text-[11px] font-medium uppercase tracking-wider text-white/40">
+                        <span className="block text-xs font-medium uppercase tracking-wider text-white/50">
                           {item.label}
                         </span>
                         <span className="mt-0.5 block wrap-break-word text-sm font-semibold text-white/75">
@@ -173,7 +173,7 @@ export default function Footer() {
           <p className="text-xs text-white/40">
             © {year} OCEAN LED. All rights reserved.
           </p>
-          <p className="text-[11px] uppercase tracking-wider text-white/30">
+          <p className="text-xs text-white/50">
             LED Displays · Video Walls · Digital Signage
           </p>
           <button

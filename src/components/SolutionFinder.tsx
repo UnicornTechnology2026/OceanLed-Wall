@@ -482,11 +482,7 @@ export default function SolutionFinder() {
                         type="button"
                         aria-pressed={selected}
                         onClick={() => choose(current.key, opt.value)}
-                        className={`group flex items-start gap-3 rounded-xl border p-4 text-left transition hover:-translate-y-0.5 hover:border-ocean-cyan/50 hover:bg-ocean-cyan/5 ${
-                          selected
-                            ? "border-ocean-cyan/60 bg-ocean-cyan/8"
-                            : "border-white/10 bg-white/3"
-                        }`}
+                        className="btn-choice group items-start gap-3 p-4 text-left"
                       >
                         {opt.icon && (
                           <opt.icon
@@ -518,7 +514,7 @@ export default function SolutionFinder() {
                     <button
                       type="button"
                       onClick={() => setStep((s) => s - 1)}
-                      className="inline-flex items-center gap-1.5 text-sm text-white/50 transition-colors hover:text-ocean-cyan"
+                      className="btn-link"
                     >
                       <ArrowLeft size={16} /> Back
                     </button>
@@ -529,7 +525,7 @@ export default function SolutionFinder() {
                     <button
                       type="button"
                       onClick={skipBudget}
-                      className="text-sm font-medium text-ocean-cyan hover:underline"
+                      className="btn-link"
                     >
                       Skip this question
                     </button>

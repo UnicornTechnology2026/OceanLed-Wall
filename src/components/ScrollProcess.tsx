@@ -137,7 +137,7 @@ export default function ScrollProcess() {
                 {/* vignette */}
                 <div className="pointer-events-none absolute inset-0 bg-[radial-linear(ellipse_at_center,transparent_60%,rgba(0,0,0,0.45)_100%)]" />
 
-                <p className="pointer-events-none absolute inset-x-0 bottom-3 text-center text-[10px] uppercase tracking-widest text-white/40 sm:text-xs">
+                <p className="pointer-events-none absolute inset-x-0 bottom-3 text-center text-xs text-white/60">
                   Scroll to explore
                 </p>
 
