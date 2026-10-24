@@ -85,7 +85,7 @@ export default function PortfolioPortal() {
       tx: Math.cos(rad) * 12,
       ty: -Math.sin(rad) * 12,
       image: p?.image ?? "",
-      label: p?.category ?? "Portfolio",
+      label: "Portfolio",
     };
   });
 

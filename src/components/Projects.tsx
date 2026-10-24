@@ -1,27 +1,48 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { MouseEvent } from "react";
-import { MapPin, ArrowUpRight } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "./Reveal";
 import CountUp from "./CountUp";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import { navigate, pageHref } from "../router";
-
-const ALL = "All";
 
 export default function Projects() {
   const { settings } = useSiteSettings();
   const projects = settings.projects;
   const { since, projects: projectCount } = settings.about;
 
-  const [active, setActive] = useState(ALL);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const categories = useMemo(
-    () => [ALL, ...Array.from(new Set(projects.map((p) => p.category)))],
-    [projects],
+  const close = useCallback(() => setOpenIndex(null), []);
+  const prev = useCallback(
+    () =>
+      setOpenIndex((i) =>
+        i === null ? i : (i - 1 + projects.length) % projects.length,
+      ),
+    [projects.length],
+  );
+  const next = useCallback(
+    () => setOpenIndex((i) => (i === null ? i : (i + 1) % projects.length)),
+    [projects.length],
   );
 
-  const visible =
-    active === ALL ? projects : projects.filter((p) => p.category === active);
+  /* keyboard controls + lock page scroll while the viewer is open */
+  useEffect(() => {
+    if (openIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [openIndex, close, prev, next]);
 
   const goContact = (e: MouseEvent) => {
     e.preventDefault();
@@ -99,86 +120,99 @@ export default function Projects() {
           </Reveal>
         </div>
 
-        {/* ───────── FILTER PILLS ───────── */}
-        {categories.length > 2 && (
-          <Reveal delay={100}>
-            <div className="mt-14 flex flex-wrap gap-2.5">
-              {categories.map((cat) => {
-                const on = cat === active;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => setActive(cat)}
-                    aria-pressed={on}
-                    className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition ${
-                      on
-                        ? "border-ocean-cyan bg-ocean-cyan text-black shadow-[0_0_20px_rgba(0,229,255,0.35)]"
-                        : "border-white/10 bg-white/3 text-white/60 hover:border-ocean-cyan/40 hover:text-ocean-cyan"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-          </Reveal>
+        {projects.length === 0 && (
+          <p className="mt-14 text-center text-sm uppercase tracking-wider text-white/40">
+            Photos coming soon.
+          </p>
         )}
 
-        {/* ───────── PROJECT GRID ───────── */}
-        <div
-          key={active}
-          className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ${
-            categories.length > 2 ? "mt-8" : "mt-14"
-          }`}
-        >
-          {visible.map((project, i) => (
+        {/* ───────── PHOTO GRID (images only) ───────── */}
+        <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          {projects.map((project, i) => (
             <Reveal
-              key={project.title}
+              key={`${project.image}-${i}`}
               delay={(i % 3) * 120}
               className="h-full"
             >
-              <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] transition duration-500 hover:-translate-y-1 hover:border-ocean-cyan/40 hover:shadow-[0_8px_50px_rgba(0,229,255,0.12)]">
-                {/* cyan top edge highlight */}
-                <div className="pointer-events-none absolute inset-x-8 top-0 z-10 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
-
-                <div className="relative aspect-16/10 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-[#060b14] via-ocean-dark/20 to-transparent" />
-
-                  <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-ocean-cyan backdrop-blur-md">
-                    {project.category}
-                  </span>
-
-                  <span className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark/80 text-ocean-cyan opacity-0 backdrop-blur-md transition duration-300 group-hover:opacity-100">
-                    <ArrowUpRight size={16} strokeWidth={2} />
-                  </span>
-                </div>
-
-                <div className="flex flex-1 items-center gap-4 p-5">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-xs font-bold text-ocean-cyan">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0">
-                    <h2 className="text-base font-bold uppercase leading-snug tracking-wide text-white transition-colors duration-300 group-hover:text-ocean-cyan">
-                      {project.title}
-                    </h2>
-                    <p className="mt-1 flex items-center gap-1.5 text-xs text-white/45">
-                      <MapPin size={12} className="shrink-0 text-ocean-cyan" />
-                      {project.location}, India
-                    </p>
-                  </div>
-                </div>
-              </article>
+              <button
+                type="button"
+                onClick={() => setOpenIndex(i)}
+                aria-label={`View photo ${i + 1} larger`}
+                className="group relative block aspect-16/10 w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/10 bg-[#0a1220] transition duration-500 hover:-translate-y-1 hover:border-ocean-cyan/40 hover:shadow-[0_8px_50px_rgba(0,229,255,0.12)] focus-visible:outline-2 focus-visible:outline-ocean-cyan"
+              >
+                <img
+                  src={project.image}
+                  alt={`OCEAN LED installation ${i + 1}`}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </button>
             </Reveal>
           ))}
         </div>
       </div>
+
+      {/* ───────── LARGE PHOTO VIEWER ───────── */}
+      {openIndex !== null &&
+        projects[openIndex] &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Photo viewer"
+            onClick={close}
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm sm:p-10"
+          >
+            <button
+              type="button"
+              onClick={close}
+              aria-label="Close"
+              className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white/80 transition hover:border-ocean-cyan hover:text-ocean-cyan sm:right-6 sm:top-6"
+            >
+              <X size={20} />
+            </button>
+
+            {projects.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prev();
+                  }}
+                  aria-label="Previous photo"
+                  className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white/80 transition hover:border-ocean-cyan hover:text-ocean-cyan sm:left-6"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    next();
+                  }}
+                  aria-label="Next photo"
+                  className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white/80 transition hover:border-ocean-cyan hover:text-ocean-cyan sm:right-6"
+                >
+                  <ChevronRight size={22} />
+                </button>
+              </>
+            )}
+
+            <img
+              key={openIndex}
+              src={projects[openIndex].image}
+              alt={`OCEAN LED installation ${openIndex + 1}`}
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-full max-w-full rounded-xl object-contain shadow-[0_0_80px_rgba(0,229,255,0.15)]"
+            />
+
+            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-black/60 px-3 py-1 text-[11px] font-medium tracking-wider text-white/60">
+              {openIndex + 1} / {projects.length}
+            </span>
+          </div>,
+          document.body,
+        )}
     </section>
   );
 }

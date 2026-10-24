@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   LogOut,
@@ -23,7 +23,8 @@ import type {
   Project,
 } from "../../context/SiteSettingsContext";
 import oceanLogo from "../../assets/logo.png";
-import ImageUpload from "./ImageUpload";
+import MultiImageUpload from "./MultiImageUpload";
+import { deleteImageByUrl } from "../../lib/supabase";
 
 const inputCls =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-ocean-cyan/50 focus:bg-ocean-cyan/[0.03] focus:ring-2 focus:ring-ocean-cyan/30";
@@ -137,16 +138,40 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
     }
   };
 
-  const updateProjectField = (
-    index: number,
-    field: keyof Project,
-    value: string,
+  /* Photo changes are saved to the website straight away (one at a time) */
+  const photoQueue = useRef<Promise<void>>(Promise.resolve());
+
+  const persistPhotos = (
+    next: Project[],
+    previous: Project[],
+    removedUrl?: string,
   ) => {
-    setProjects((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], [field]: value };
-      return next;
+    setProjects(next);
+    setError("");
+    photoQueue.current = photoQueue.current.then(async () => {
+      try {
+        await saveProjects(next);
+        if (removedUrl) {
+          // also free the storage space (best-effort)
+          deleteImageByUrl(removedUrl).catch(() => {});
+        }
+      } catch (err) {
+        setProjects(previous);
+        setError(`Could not update photos: ${messageOf(err)}`);
+      }
     });
+  };
+
+  const addProjectImages = (urls: string[]) =>
+    persistPhotos([...projects, ...urls.map((image) => ({ image }))], projects);
+
+  const removeProjectImage = (index: number) => {
+    if (!window.confirm("Delete this photo from the website?")) return;
+    persistPhotos(
+      projects.filter((_, i) => i !== index),
+      projects,
+      projects[index]?.image,
+    );
   };
 
   const openInquiry = (id: string) => {
@@ -188,10 +213,10 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
     },
     {
       id: "projects",
-      label: "Project Images",
+      label: "Project Photos",
       icon: ImageIcon,
-      title: "Project images",
-      sub: "Update the title, category, location and image of each project card.",
+      title: "Project photos",
+      sub: "Upload photos for the Projects page. Uploads and deletions update the website immediately.",
     },
   ];
 
@@ -632,61 +657,44 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
 
             {/* ───────── PROJECTS TAB ───────── */}
             {tab === "projects" && (
-              <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-                {projects.map((project, i) => (
-                  <Card key={i} className="space-y-4 p-5!">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-xs font-bold text-ocean-cyan">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-medium uppercase tracking-wider text-white/40">
-                          Project {i + 1}
-                        </p>
-                        <p className="truncate text-sm font-bold uppercase tracking-wide text-white">
-                          {project.title || "Untitled"}
-                        </p>
-                      </div>
-                    </div>
+              <div className="space-y-6">
+                <MultiImageUpload
+                  folder="projects"
+                  maxWidth={1600}
+                  onUploaded={addProjectImages}
+                />
 
-                    <input
-                      type="text"
-                      value={project.title}
-                      onChange={(e) =>
-                        updateProjectField(i, "title", e.target.value)
-                      }
-                      placeholder="Title"
-                      className={inputCls}
-                    />
-                    <div className="grid grid-cols-2 gap-3">
-                      <input
-                        type="text"
-                        value={project.category}
-                        onChange={(e) =>
-                          updateProjectField(i, "category", e.target.value)
-                        }
-                        placeholder="Category"
-                        className={inputCls}
-                      />
-                      <input
-                        type="text"
-                        value={project.location}
-                        onChange={(e) =>
-                          updateProjectField(i, "location", e.target.value)
-                        }
-                        placeholder="Location"
-                        className={inputCls}
-                      />
-                    </div>
-                    <ImageUpload
-                      value={project.image}
-                      folder="projects"
-                      onChange={(img) => updateProjectField(i, "image", img)}
-                      previewClass="h-40 w-full"
-                      maxWidth={900}
-                    />
-                  </Card>
-                ))}
+                <p className="text-xs font-medium uppercase tracking-wider text-white/45">
+                  {projects.length} photo{projects.length === 1 ? "" : "s"}
+                  {" · "}changes go live immediately
+                </p>
+
+                {projects.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                    {projects.map((project, i) => (
+                      <div
+                        key={`${project.image}-${i}`}
+                        className="group relative aspect-4/3 overflow-hidden rounded-xl border border-white/10 bg-white/3"
+                      >
+                        <img
+                          src={project.image}
+                          alt=""
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeProjectImage(i)}
+                          title="Remove photo"
+                          aria-label="Remove photo"
+                          className="absolute right-2 top-2 rounded-full bg-black/70 p-1.5 text-white/80 transition hover:bg-red-500 hover:text-white sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

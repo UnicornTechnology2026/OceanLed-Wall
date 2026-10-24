@@ -4,7 +4,7 @@ import { Upload, X } from "lucide-react";
 import { uploadImage } from "../../lib/supabase";
 
 /** Resize + compress in the browser so uploads stay small and fast. */
-function compressImage(
+export function compressImage(
   file: File,
   maxWidth: number,
   quality = 0.82,
@@ -40,7 +40,7 @@ function compressImage(
 }
 
 /** Uploads to Supabase Storage and returns the public URL. */
-function uploadToStorage(blob: Blob, folder: string): Promise<string> {
+export function uploadToStorage(blob: Blob, folder: string): Promise<string> {
   const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
   return uploadImage(blob, `${folder}/${name}`);
 }

@@ -251,3 +251,18 @@ export async function uploadImage(blob: Blob, path: string): Promise<string> {
   if (!res.ok) throw await toError(res);
   return `${c.url}/storage/v1/object/public/${IMAGE_BUCKET}/${path}`;
 }
+/** Removes an uploaded image from Storage, given its public URL. Best-effort. */
+export async function deleteImageByUrl(publicUrl: string): Promise<void> {
+  const c = config();
+  const prefix = `${c.url}/storage/v1/object/public/${IMAGE_BUCKET}/`;
+  if (!publicUrl.startsWith(prefix)) return; // not one of our uploads
+  const path = publicUrl.slice(prefix.length);
+  const token = await getAccessToken();
+  await fetch(`${c.url}/storage/v1/object/${IMAGE_BUCKET}/${path}`, {
+    method: "DELETE",
+    headers: {
+      apikey: c.anonKey,
+      Authorization: `Bearer ${token ?? c.anonKey}`,
+    },
+  });
+}

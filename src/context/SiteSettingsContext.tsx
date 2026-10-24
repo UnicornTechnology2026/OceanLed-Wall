@@ -32,10 +32,8 @@ export interface AboutSettings {
   cities: string;
 }
 
+/** A gallery photo – the Projects page shows images only, no text. */
 export interface Project {
-  title: string;
-  category: string;
-  location: string;
   image: string;
 }
 
@@ -108,44 +106,26 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   projects: [
     {
-      title: "Corporate Lobby Video Wall",
-      category: "Indoor LED",
-      location: "Mumbai",
       image:
         "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
     },
     {
-      title: "Outdoor Stadium Display",
-      category: "Outdoor LED",
-      location: "Delhi",
       image:
         "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80",
     },
     {
-      title: "Retail Digital Signage Network",
-      category: "Digital Signage",
-      location: "Bangalore",
       image:
         "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80",
     },
     {
-      title: "Control Room Command Center",
-      category: "LED Video Wall",
-      location: "Hyderabad",
       image:
         "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
     },
     {
-      title: "Architectural Facade Installation",
-      category: "Custom LED",
-      location: "Chennai",
       image:
         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
     },
     {
-      title: "Event Stage Backdrop",
-      category: "Indoor LED",
-      location: "Pune",
       image:
         "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80",
     },
@@ -188,9 +168,6 @@ interface InquiryRow {
 }
 
 interface ProjectRow {
-  title: string;
-  category: string;
-  location: string;
   image_url: string;
 }
 
@@ -205,17 +182,14 @@ const rowToInquiry = (r: InquiryRow): Inquiry => ({
 });
 
 const rowToProject = (r: ProjectRow): Project => ({
-  title: r.title,
-  category: r.category,
-  location: r.location,
   image: r.image_url,
 });
 
 const projectToRow = (p: Project, position: number) => ({
   position,
-  title: p.title,
-  category: p.category,
-  location: p.location,
+  title: "",
+  category: "",
+  location: "",
   image_url: p.image,
 });
 
@@ -243,20 +217,14 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
           contact: Partial<ContactSettings>;
           about: Partial<AboutSettings>;
         }>("site_settings", "select=contact,about&id=eq.1"),
-        dbSelect<ProjectRow>(
-          "projects",
-          "select=title,category,location,image_url&order=position.asc",
-        ),
+        dbSelect<ProjectRow>("projects", "select=image_url&order=position.asc"),
       ]);
 
       // Fall back to defaults for anything that has not been saved yet
       const next: SiteSettings = {
         contact: { ...DEFAULT_SETTINGS.contact, ...(rows[0]?.contact ?? {}) },
         about: { ...DEFAULT_SETTINGS.about, ...(rows[0]?.about ?? {}) },
-        projects:
-          projectRows.length > 0
-            ? projectRows.map(rowToProject)
-            : DEFAULT_SETTINGS.projects,
+        projects: projectRows.map(rowToProject),
       };
       setSettings(next);
       writeCache(next);
@@ -417,7 +385,23 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const saveProjects = useCallback(async (projects: Project[]) => {
-    await dbUpsert("projects", projects.map(projectToRow), "position");
+    if (projects.length > 0) {
+      await dbUpsert("projects", projects.map(projectToRow), "position");
+    }
+    // remove rows left over from images the admin deleted
+    await dbDelete("projects", `position=gte.${projects.length}`);
+
+    // Row-level security can silently ignore a delete, so confirm it worked
+    const remaining = await dbSelect<ProjectRow>(
+      "projects",
+      "select=image_url",
+    );
+    if (remaining.length > projects.length) {
+      throw new Error(
+        "The photo could not be removed from the website – the database is missing delete permission on the projects table (see the SQL policy).",
+      );
+    }
+
     setSettings((prev) => {
       const next = { ...prev, projects };
       writeCache(next);
