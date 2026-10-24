@@ -1,9 +1,8 @@
-import { useSiteSettings } from "../context/SiteSettingsContext";
 import { Sparkles, Cpu, Shield, Settings } from "lucide-react";
 import type { MouseEvent } from "react";
 import Reveal from "./Reveal";
-import CountUp from "./CountUp";
 import { navigate, pageHref } from "../router";
+import aboutImage from "../assets/ocean_led_logo.png";
 
 const HIGHLIGHTS = [
   {
@@ -33,9 +32,6 @@ const HIGHLIGHTS = [
 ];
 
 export default function About() {
-  const { settings } = useSiteSettings();
-  const { image, since, projects } = settings.about;
-
   const goContact = (e: MouseEvent) => {
     e.preventDefault();
     navigate("contact");
@@ -98,40 +94,15 @@ export default function About() {
             {/* cyan top edge highlight */}
             <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
 
-            {/* image + stats */}
-            <div className="relative overflow-hidden rounded-2xl border border-white/10">
+            {/* image */}
+            {/* image */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white">
               <img
-                src={image}
-                alt="Modern LED display installation"
-                className="aspect-video w-full object-cover"
+                src={aboutImage}
+                alt="OCEAN LED Video Wall"
+                className="aspect-video w-full object-contain p-4"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-linear-to-tr from-ocean-dark/70 via-ocean-dark/20 to-ocean-blue/20" />
-
-              <div className="absolute inset-x-4 bottom-4 flex items-stretch rounded-xl border border-white/10 bg-black/50 py-3 backdrop-blur-xl">
-                {[
-                  { label: "Since", value: since, accent: false },
-                  { label: "Projects", value: projects, accent: true },
-                ]
-                  .filter((stat) => String(stat.value ?? "").trim() !== "")
-                  .map((stat) => (
-                    <div
-                      key={stat.label}
-                      className="min-w-0 flex-1 border-l border-white/10 px-2 text-center first:border-l-0"
-                    >
-                      <p className="text-xs uppercase tracking-wider text-white/50">
-                        {stat.label}
-                      </p>
-                      <p
-                        className={`text-lg font-bold ${
-                          stat.accent ? "text-ocean-cyan" : "text-white"
-                        }`}
-                      >
-                        <CountUp value={stat.value} />
-                      </p>
-                    </div>
-                  ))}
-              </div>
             </div>
 
             {/* why Ocean LED list */}
