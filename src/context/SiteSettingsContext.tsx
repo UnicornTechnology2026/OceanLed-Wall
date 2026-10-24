@@ -43,17 +43,53 @@ export interface SiteSettings {
   projects: Project[];
 }
 
+/** Every value shown on the LED Configurator page, saved with the quote request. */
+export interface LedConfiguration {
+  shape: string;
+  shape_label: string;
+  shape_detail: string;
+  width_m: number;
+  height_m: number;
+  width_ft: number;
+  height_ft: number;
+  area_sqm: number;
+  area_sqft: number;
+  curve_angle_deg: number | null;
+  orientation: string | null;
+  pixel_pitch: string;
+  preview_content: string;
+  show_cabinet_grid: boolean;
+  show_person: boolean;
+  cabinet_columns: number;
+  cabinet_rows: number;
+  cabinets_total: number;
+  cabinet_size_mm: string;
+  resolution_x: number;
+  resolution_y: number;
+  megapixels: number;
+  custom_requirements: string;
+}
+
 export interface Inquiry {
   id: string;
   name: string;
   email: string;
   phone: string;
   message: string;
+  /** where the inquiry came from, e.g. "contact", "led_configurator" */
+  source: string;
+  configuration: LedConfiguration | null;
   createdAt: string;
   read: boolean;
 }
 
-export type NewInquiry = Omit<Inquiry, "id" | "createdAt" | "read">;
+export type NewInquiry = Omit<
+  Inquiry,
+  "id" | "createdAt" | "read" | "source" | "configuration"
+> & {
+  source?: string;
+  configuration?: LedConfiguration | null;
+};
 
 /**
  * loading      – first fetch from Supabase in progress (defaults/cache shown)
@@ -163,6 +199,8 @@ interface InquiryRow {
   email: string;
   phone: string;
   message: string;
+  source: string | null;
+  configuration: LedConfiguration | null;
   is_read: boolean;
   created_at: string;
 }
@@ -177,6 +215,8 @@ const rowToInquiry = (r: InquiryRow): Inquiry => ({
   email: r.email,
   phone: r.phone,
   message: r.message,
+  source: r.source ?? "contact",
+  configuration: r.configuration ?? null,
   createdAt: r.created_at,
   read: r.is_read,
 });
@@ -299,7 +339,7 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const refreshInquiries = useCallback(async () => {
     const rows = await dbSelect<InquiryRow>(
       "inquiries",
-      "select=id,name,email,phone,message,is_read,created_at&order=created_at.desc",
+      "select=id,name,email,phone,message,source,configuration,is_read,created_at&order=created_at.desc",
     );
     setInquiries(rows.map(rowToInquiry));
   }, []);
@@ -321,6 +361,8 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
         email: inquiry.email,
         phone: inquiry.phone,
         message: inquiry.message,
+        source: inquiry.source ?? "contact",
+        configuration: inquiry.configuration ?? null,
       });
     } catch (err) {
       console.error("Failed to submit inquiry", err);

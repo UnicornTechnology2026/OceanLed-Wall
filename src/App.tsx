@@ -21,7 +21,6 @@ import Process from "./components/Process";
 import OfficeMap from "./components/OfficeMap";
 import ScrollProduct from "./components/ScrollProduct";
 import ScrollProgress from "./components/ScrollProgress";
-import SolutionFinder from "./components/SolutionFinder";
 import PortfolioPortal from "./components/PortfolioPortal";
 import PanIndiaDelivery from "./components/PanIndiaDelivery";
 import ScrollProcess from "./components/ScrollProcess";
@@ -33,11 +32,10 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
     <>
       <Hero />
       <ScrollProduct />
-      <SolutionFinder />
-      <PortfolioPortal />
       <Suspense fallback={<div className="h-96 bg-ocean-dark" />}>
         <LedConfigurator />
       </Suspense>
+      <PortfolioPortal />
       <PanIndiaDelivery />
     </>
   ),

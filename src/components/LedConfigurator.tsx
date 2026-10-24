@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
+import type { LedConfiguration } from "../context/SiteSettingsContext";
 
 /* ------------------------------------------------------------------ */
 /* Types and constants                                                 */
@@ -453,6 +454,8 @@ export default function LedConfigurator() {
   });
   const [errors, setErrors] = useState<QuoteErrors>({});
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const three = useRef<ThreeState | null>(null);
@@ -571,12 +574,52 @@ export default function LedConfigurator() {
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (submitting || !validate()) return;
 
     const shapeLabel =
       SHAPES.find((s) => s.key === config.shape)?.label ?? config.shape;
+    const contentLabel =
+      CONTENTS.find((ct) => ct.key === config.content)?.label ?? config.content;
+    const hasOrientation =
+      config.shape === "curved" || config.shape === "corner";
+    const orientation = hasOrientation
+      ? config.shape === "curved"
+        ? config.inward
+          ? "Concave (wraps viewer)"
+          : "Convex (bulges out)"
+        : config.inward
+          ? "Inside corner"
+          : "Outside corner"
+      : null;
+
+    const configuration: LedConfiguration = {
+      shape: config.shape,
+      shape_label: shapeLabel,
+      shape_detail: specs.detail || "Flat",
+      width_m: config.width,
+      height_m: config.height,
+      width_ft: Number((config.width * FT_PER_M).toFixed(1)),
+      height_ft: Number((config.height * FT_PER_M).toFixed(1)),
+      area_sqm: Number(specs.area.toFixed(2)),
+      area_sqft: Math.round(specs.areaFt),
+      curve_angle_deg: config.shape === "curved" ? config.angle : null,
+      orientation,
+      pixel_pitch: `P${config.pitch}`,
+      preview_content: contentLabel,
+      show_cabinet_grid: config.cabinetGrid,
+      show_person: config.person,
+      cabinet_columns: specs.cols,
+      cabinet_rows: specs.rows,
+      cabinets_total: specs.cabinets,
+      cabinet_size_mm: "500 × 500",
+      resolution_x: specs.resX,
+      resolution_y: specs.resY,
+      megapixels: Number(specs.megapixels.toFixed(2)),
+      custom_requirements: form.notes.trim(),
+    };
+
     const lines = [
       "3D LED Display Configurator enquiry",
       "",
@@ -590,19 +633,34 @@ export default function LedConfigurator() {
       `Custom requirements: ${form.notes.trim() || "None"}`,
     ];
 
-    addInquiry({
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      message: lines.join("\n"),
-    });
-    setSent(true);
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      await addInquiry({
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        message: lines.join("\n"),
+        source: "led_configurator",
+        configuration,
+      });
+      setSent(true);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't send your request. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const reset = () => {
     setConfig(DEFAULT_CONFIG);
     setForm({ name: "", phone: "", email: "", notes: "" });
     setErrors({});
+    setSubmitError("");
     setSent(false);
   };
 
@@ -1054,11 +1112,21 @@ export default function LedConfigurator() {
                       className={`${fieldClass} resize-none border-white/10`}
                     />
 
+                    {submitError && (
+                      <p
+                        role="alert"
+                        className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300"
+                      >
+                        {submitError}
+                      </p>
+                    )}
+
                     <button
                       type="submit"
-                      className="inline-flex w-full items-center justify-center gap-3 rounded-md bg-ocean-cyan px-6 py-4 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
+                      disabled={submitting}
+                      className="inline-flex w-full items-center justify-center gap-3 rounded-md bg-ocean-cyan px-6 py-4 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)] disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      Request Quote
+                      {submitting ? "Sending…" : "Request Quote"}
                       <span className="h-1.5 w-1.5 rounded-full bg-black" />
                     </button>
                   </form>
