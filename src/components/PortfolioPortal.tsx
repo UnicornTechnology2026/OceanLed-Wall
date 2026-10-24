@@ -85,7 +85,7 @@ export default function PortfolioPortal() {
       tx: Math.cos(rad) * 12,
       ty: -Math.sin(rad) * 12,
       image: p?.image ?? "",
-      label: "Portfolio",
+      label: "Project",
     };
   });
 
@@ -133,7 +133,7 @@ export default function PortfolioPortal() {
         {/* ───────── SECTION 1 : TEXT ───────── */}
         <Reveal direction="left">
           <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
-            Explore our LED portfolio
+            Explore our LED Project
             <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
               built to be seen.
             </span>
@@ -143,7 +143,7 @@ export default function PortfolioPortal() {
             From large facades to creative sphere, cube and tree installations,
             see how we turn ordinary spaces into high-impact LED experiences.
             Hover over the wheel to preview a project and click any slice to
-            open the full portfolio.
+            open the full Project.
           </p>
 
           <ul className="mt-8 space-y-5">
@@ -169,7 +169,7 @@ export default function PortfolioPortal() {
             onClick={go}
             className="btn btn-primary mt-8 sm:px-8 sm:py-4"
           >
-            View Full Portfolio
+            View Full Project
             <span className="h-1.5 w-1.5 rounded-full bg-black" />
           </a>
         </Reveal>
@@ -389,7 +389,7 @@ export default function PortfolioPortal() {
                   lengthAdjust="spacingAndGlyphs"
                   style={{ transition: "fill .3s" }}
                 >
-                  PORTFOLIO
+                  PROJECT
                 </text>
               </a>
             </svg>
