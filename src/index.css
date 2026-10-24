@@ -24,6 +24,22 @@ body {
   overflow-x: hidden;
 }
 
+/* Page text can't be selected with the pointer; form fields stay selectable */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+img {
+  -webkit-user-drag: none;
+}
+
 /* Hide the blinking text caret on normal page content; keep it in form fields */
 * {
   caret-color: transparent;
