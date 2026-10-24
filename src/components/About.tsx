@@ -69,10 +69,9 @@ export default function About() {
 
           <Reveal delay={250}>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/55 sm:text-base">
-              Our portfolio spans indoor and outdoor LED displays, video walls,
-              digital signage, and fully custom installations. Every project is
-              approached with attention to detail, from pixel pitch selection to
-              system integration.
+              We design, supply, and install LED video walls and digital signage
+              tailored to your space. Every project receives careful attention,
+              from pixel pitch selection to final system integration.
             </p>
           </Reveal>
 
