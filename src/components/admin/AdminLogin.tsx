@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { Lock, User, Eye, EyeOff, ArrowLeft, AlertCircle } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, AlertCircle } from "lucide-react";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
 import oceanLogo from "../../assets/logo.png";
 
@@ -17,22 +17,25 @@ export default function AdminLogin({
   onBack: () => void;
 }) {
   const { login } = useSiteSettings();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    setTimeout(() => {
-      const ok = login(username.trim(), password);
+    try {
+      const err = await login(email.trim(), password);
+      if (err) setError(err);
+      else onSuccess?.();
+    } catch (ex) {
+      setError(ex instanceof Error ? ex.message : "Could not sign in");
+    } finally {
       setLoading(false);
-      if (ok) onSuccess?.();
-      else setError("Invalid username or password");
-    }, 400);
+    }
   };
 
   return (
@@ -100,22 +103,22 @@ export default function AdminLogin({
 
             <form onSubmit={handleSubmit} className="mt-7 space-y-5">
               <div>
-                <label htmlFor="username" className={labelCls}>
-                  Username
+                <label htmlFor="email" className={labelCls}>
+                  Email
                 </label>
                 <div className="relative">
-                  <User
+                  <Mail
                     size={16}
                     className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ocean-cyan/70"
                   />
                   <input
-                    id="username"
-                    type="text"
+                    id="email"
+                    type="email"
                     autoComplete="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className={`${inputCls} pr-4`}
-                    placeholder="admin"
+                    placeholder="you@company.com"
                     required
                   />
                 </div>
@@ -176,11 +179,6 @@ export default function AdminLogin({
                 )}
               </button>
             </form>
-
-            <p className="mt-6 text-center text-[11px] text-white/30">
-              Demo: username <span className="text-white/50">admin</span> ·
-              password <span className="text-white/50">oceanled2026</span>
-            </p>
           </div>
 
           {/* mobile back button */}

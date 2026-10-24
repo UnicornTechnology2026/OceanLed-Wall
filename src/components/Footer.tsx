@@ -54,7 +54,7 @@ export default function Footer() {
                   <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
                   Let’s talk — free quote
                 </span>
-                <h2 className="mt-4 text-2xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-4xl">
+                <h2 className="mt-4 text-2xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl">
                   Ready to light up
                   <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                     your space?

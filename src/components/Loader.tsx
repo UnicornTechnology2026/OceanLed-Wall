@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import MosaicBackground from "./MosaicBackground";
-import oceanLogo from "../assets/logo.png";
+import oceanLogo from "../assets/logo-loader.png";
 
 export default function Loader({ onComplete }: { onComplete?: () => void }) {
   const [progress, setProgress] = useState(0);
@@ -76,20 +76,19 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
       <MosaicBackground />
 
       <div className="relative z-10 flex flex-col items-center px-6 text-center">
-        {/* Logo */}
+        {/* Logo: the PNG already carries a white backing that follows the
+            logo's own outline, so no circle is needed */}
         <div
-          className="animate-fade-in-scale mb-6 rounded-full bg-ocean-dark/85 p-5 opacity-0 backdrop-blur-sm"
+          className="animate-fade-in-scale mb-6 opacity-0"
           style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
         >
-          <span className="animate-logo-glow relative block aspect-223/209 h-32 overflow-hidden sm:h-40">
-            <img
-              src={oceanLogo}
-              alt=""
-              width={500}
-              height={500}
-              className="absolute left-[-62.8%] top-[-69.9%] w-[224.2%] max-w-none"
-            />
-          </span>
+          <img
+            src={oceanLogo}
+            alt="Ocean LED"
+            width={233}
+            height={219}
+            className="animate-logo-glow h-32 w-auto sm:h-40"
+          />
         </div>
 
         <p

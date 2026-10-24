@@ -8,18 +8,18 @@ import {
   Phone,
   MapPin,
   Image as ImageIcon,
-  Hash,
   ArrowLeft,
   CheckCircle,
   Inbox,
   Trash2,
   Eye,
   ChevronRight,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
 import type {
   ContactSettings,
-  AboutSettings,
   Project,
 } from "../../context/SiteSettingsContext";
 import oceanLogo from "../../assets/logo.png";
@@ -52,11 +52,11 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
   const {
     settings,
     logout,
-    updateContact,
-    updateAbout,
-    updateProject,
+    saveContact,
+    saveProjects,
     resetSettings,
     inquiries,
+    refreshInquiries,
     markInquiryRead,
     deleteInquiry,
     clearInquiries,
@@ -65,28 +65,75 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
   const [contact, setContact] = useState<ContactSettings>({
     ...settings.contact,
   });
-  const [about, setAbout] = useState<AboutSettings>({ ...settings.about });
   const [projects, setProjects] = useState<Project[]>(
     settings.projects.map((p) => ({ ...p })),
   );
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
   const [tab, setTab] = useState("inquiries");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const unreadCount = inquiries.filter((i) => !i.read).length;
 
-  const handleSave = () => {
-    updateContact(contact);
-    updateAbout(about);
-    projects.forEach((p, i) => updateProject(i, p));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+  const messageOf = (err: unknown) =>
+    err instanceof Error ? err.message : "Something went wrong";
+
+  const handleSave = async () => {
+    setError("");
+    setSaving(true);
+    try {
+      await Promise.all([saveContact(contact), saveProjects(projects)]);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setError(`Could not save changes: ${messageOf(err)}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleReset = () => {
-    if (window.confirm("Reset all settings to defaults?")) {
-      resetSettings();
-      setTimeout(() => window.location.reload(), 100);
+  const handleReset = async () => {
+    if (!window.confirm("Reset all settings to defaults?")) return;
+    setError("");
+    try {
+      await resetSettings();
+      window.location.reload();
+    } catch (err) {
+      setError(`Could not reset: ${messageOf(err)}`);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setError("");
+    setRefreshing(true);
+    try {
+      await refreshInquiries();
+    } catch (err) {
+      setError(`Could not refresh inquiries: ${messageOf(err)}`);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    setError("");
+    try {
+      await deleteInquiry(id);
+      setSelectedId(null);
+    } catch (err) {
+      setError(`Could not delete inquiry: ${messageOf(err)}`);
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (!window.confirm("Delete all inquiries?")) return;
+    setError("");
+    try {
+      await clearInquiries();
+    } catch (err) {
+      setError(`Could not clear inquiries: ${messageOf(err)}`);
     }
   };
 
@@ -104,7 +151,7 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
 
   const openInquiry = (id: string) => {
     setSelectedId(id);
-    markInquiryRead(id);
+    void markInquiryRead(id);
   };
 
   const selected = inquiries.find((i) => i.id === selectedId);
@@ -138,13 +185,6 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
       icon: Mail,
       title: "Contact information",
       sub: "Shown in the Contact section, map and Footer.",
-    },
-    {
-      id: "about",
-      label: "About & Stats",
-      icon: Hash,
-      title: "About and stats",
-      sub: "Image and numbers used on the About, Hero and Projects pages.",
     },
     {
       id: "projects",
@@ -183,7 +223,7 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
         </div>
 
         <nav className=" flex-1 space-y-2">
-          {tabs.map((t, i) => {
+          {tabs.map((t) => {
             const active = tab === t.id;
             return (
               <button
@@ -207,9 +247,6 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
                   <t.icon size={18} strokeWidth={1.75} />
                 </span>
                 <span className="block min-w-0 flex-1">
-                  <span className="block text-[10px] font-medium uppercase tracking-wider text-white/35">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
                   <span
                     className={`block text-sm font-semibold uppercase tracking-wide ${
                       active ? "text-white" : "text-white/70"
@@ -327,6 +364,23 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
             {current.sub}
           </p>
 
+          {error && (
+            <div
+              role="alert"
+              className="mt-6 flex items-start gap-2.5 rounded-xl border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm text-red-300"
+            >
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
+              <span className="min-w-0 flex-1 wrap-break-word">{error}</span>
+              <button
+                type="button"
+                onClick={() => setError("")}
+                className="shrink-0 text-xs font-semibold uppercase tracking-wider text-red-300/70 hover:text-red-300"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+
           <div className="mt-8">
             {/* ───────── INQUIRIES TAB ───────── */}
             {tab === "inquiries" && (
@@ -359,21 +413,30 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
                   ))}
                 </div>
 
-                {inquiries.length > 0 && (
-                  <div className="flex justify-end">
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/60 transition hover:border-ocean-cyan/40 hover:text-ocean-cyan disabled:opacity-50"
+                  >
+                    <RefreshCw
+                      size={12}
+                      className={refreshing ? "animate-spin" : ""}
+                    />
+                    Refresh
+                  </button>
+                  {inquiries.length > 0 && (
                     <button
                       type="button"
-                      onClick={() => {
-                        if (window.confirm("Delete all inquiries?"))
-                          clearInquiries();
-                      }}
+                      onClick={handleClearAll}
                       className="inline-flex items-center gap-2 rounded-full border border-red-400/25 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-red-400/80 transition hover:border-red-400/50 hover:text-red-400"
                     >
                       <Trash2 size={12} />
                       Clear all
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {inquiries.length === 0 ? (
                   <Card className="py-16 text-center">
@@ -455,10 +518,7 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
                             </div>
                             <button
                               type="button"
-                              onClick={() => {
-                                deleteInquiry(selected.id);
-                                setSelectedId(null);
-                              }}
+                              onClick={() => handleDelete(selected.id)}
                               className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-red-400/25 px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wider text-red-400/80 transition hover:border-red-400/50 hover:text-red-400"
                             >
                               <Trash2 size={12} />
@@ -570,45 +630,6 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
               </Card>
             )}
 
-            {/* ───────── ABOUT TAB ───────── */}
-            {tab === "about" && (
-              <Card className="max-w-2xl space-y-6">
-                <div>
-                  <label className={labelCls}>
-                    <ImageIcon size={13} /> About Image
-                  </label>
-                  <ImageUpload
-                    value={about.image}
-                    onChange={(img) => setAbout({ ...about, image: img })}
-                    previewClass="h-40 w-full"
-                    maxWidth={1000}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {(
-                    [
-                      ["since", "Since"],
-                      ["projects", "Projects"],
-                      ["cities", "Cities"],
-                    ] as const
-                  ).map(([key, label]) => (
-                    <div key={key}>
-                      <label className={labelCls}>{label}</label>
-                      <input
-                        type="text"
-                        value={about[key]}
-                        onChange={(e) =>
-                          setAbout({ ...about, [key]: e.target.value })
-                        }
-                        className={inputCls}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-
             {/* ───────── PROJECTS TAB ───────── */}
             {tab === "projects" && (
               <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
@@ -659,6 +680,7 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
                     </div>
                     <ImageUpload
                       value={project.image}
+                      folder="projects"
                       onChange={(img) => updateProjectField(i, "image", img)}
                       previewClass="h-40 w-full"
                       maxWidth={900}
@@ -675,9 +697,12 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
                   <button
                     type="button"
                     onClick={handleSave}
-                    className="inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
+                    disabled={saving}
+                    className="inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                   >
-                    {saved ? (
+                    {saving ? (
+                      "Saving…"
+                    ) : saved ? (
                       <>
                         <CheckCircle size={16} /> Saved
                       </>

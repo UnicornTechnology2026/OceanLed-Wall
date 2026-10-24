@@ -24,6 +24,42 @@ body {
   overflow-x: hidden;
 }
 
+/* Hide the blinking text caret on normal page content; keep it in form fields */
+* {
+  caret-color: transparent;
+}
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  caret-color: auto;
+}
+
+/* Normal arrow pointer over page text (no I-beam); text cursor only in editable fields */
+body {
+  cursor: default;
+}
+a,
+button,
+[role="button"],
+summary,
+label[for],
+select {
+  cursor: pointer;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="file"]
+  ):not([type="submit"]):not([type="button"]),
+textarea,
+[contenteditable="true"] {
+  cursor: text;
+}
+button:disabled,
+input:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,
