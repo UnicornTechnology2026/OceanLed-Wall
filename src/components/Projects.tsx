@@ -3,14 +3,12 @@ import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "./Reveal";
-import CountUp from "./CountUp";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import { navigate, pageHref } from "../router";
 
 export default function Projects() {
   const { settings } = useSiteSettings();
   const projects = settings.projects;
-  const { since, projects: projectCount } = settings.about;
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -48,11 +46,6 @@ export default function Projects() {
     e.preventDefault();
     navigate("contact");
   };
-
-  const STATS = [
-    { label: "Since", value: since },
-    { label: "Projects Delivered", value: projectCount },
-  ];
 
   return (
     <section
@@ -96,28 +89,6 @@ export default function Projects() {
               </a>
             </Reveal>
           </div>
-
-          {/* Stats card */}
-          <Reveal direction="right" delay={100}>
-            <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] sm:p-8">
-              <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
-
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {STATS.map((s, i) => (
-                  <Reveal key={s.label} delay={i * 120}>
-                    <div className="h-full rounded-xl border border-white/10 bg-white/3 p-5 text-center transition hover:-translate-y-0.5 hover:border-ocean-cyan/40 hover:bg-ocean-cyan/4">
-                      <p className="text-3xl font-extrabold tracking-tight text-ocean-cyan sm:text-4xl">
-                        <CountUp value={s.value} />
-                      </p>
-                      <p className="mt-2 text-xs font-medium uppercase tracking-wider text-white/45">
-                        {s.label}
-                      </p>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          </Reveal>
         </div>
 
         {projects.length === 0 && (

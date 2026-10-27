@@ -147,17 +147,17 @@ export default function ScrollProduct() {
         {/* soft background glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,255,0,0.07),transparent_55%)]" />
 
-        <div className="relative mx-auto grid h-full max-w-7xl grid-cols-1 items-center gap-6 px-4 pb-6 sm:px-6 lg:grid-cols-[1fr_1.45fr] lg:gap-10 lg:px-8">
+        <div className="relative mx-auto flex h-full max-w-7xl flex-col gap-4 px-4 pb-4 sm:px-6 lg:grid lg:grid-cols-[1fr_1.45fr] lg:items-center lg:gap-10 lg:px-8 lg:pb-6">
           {/* ───────── SECTION 1 : TEXT ───────── */}
-          <div className="order-1 flex flex-col items-start">
-            <h2 className="mt-5 text-3xl font-extrabold uppercase leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-6xl">
-              High-Performance LED Display Solutions
+          <div className="order-1 flex shrink-0 flex-col items-start">
+            <h2 className="mt-2 text-[clamp(1.35rem,4.6vh,3rem)] font-extrabold uppercase leading-[1.1] tracking-tighter text-white lg:mt-5 lg:text-6xl">
+              Redefining Digital Display Experiences
               <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                 Performance That Never Pauses.
               </span>
             </h2>
 
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white sm:text-lg">
+            <p className="mt-3 max-w-xl text-sm leading-snug text-white sm:text-base lg:mt-5 lg:text-lg lg:leading-relaxed">
               Direct-view LED architecture designed for continuous 24/7
               mission-critical operations, harsh ambient sunlight, and ultra-low
               maintenance overhead.
@@ -165,7 +165,7 @@ export default function ScrollProduct() {
 
             <button
               onClick={() => navigate("contact")}
-              className="mt-6 inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(212,255,0,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(212,255,0,0.55)] sm:px-8 sm:py-4"
+              className="mt-4 inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3 lg:mt-6 lg:py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(212,255,0,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(212,255,0,0.55)] sm:px-8"
             >
               Request Engineering Proposal
               <span className="h-1.5 w-1.5 rounded-full bg-black" />
@@ -173,8 +173,8 @@ export default function ScrollProduct() {
           </div>
 
           {/* ───────── SECTION 2 : FRAME CARD ───────── */}
-          <div className="relative order-2 h-full max-h-[48vh] min-h-0 lg:max-h-[78vh]">
-            <div className="relative h-full overflow-hidden rounded-[28px] border border-white/10 bg-black shadow-[0_0_80px_rgba(0,0,0,0.6)]">
+          <div className="relative order-2 min-h-35 flex-1 lg:h-full lg:max-h-[78vh] lg:flex-none">
+            <div className="absolute inset-0 overflow-hidden rounded-[28px] lg:relative lg:inset-auto lg:h-full border border-white/10 bg-black shadow-[0_0_80px_rgba(0,0,0,0.6)]">
               {/* lime top edge highlight */}
               <div className="pointer-events-none absolute inset-x-10 top-0 z-10 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
 
