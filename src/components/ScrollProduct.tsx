@@ -141,9 +141,9 @@ export default function ScrollProduct() {
     <section
       ref={wrapRef}
       id="product"
-      className="relative h-[300vh] bg-ocean-dark"
+      className="relative h-[640vh] bg-ocean-dark"
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden pt-20 md:pt-24">
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* soft background glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_30%,rgba(212,255,0,0.07),transparent_55%)]" />
 
