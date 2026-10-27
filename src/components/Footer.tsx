@@ -1,10 +1,11 @@
-import type { MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { ArrowUp, Mail, Phone, MapPin, ChevronRight } from "lucide-react";
 import { navigate, pageHref } from "../router";
 import type { Page } from "../router";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import oceanLogo from "../assets/logo.png";
+import PrivacyModal from "./PrivacyModal";
 
 const FOOTER_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
@@ -18,6 +19,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
   const { settings } = useSiteSettings();
   const { email, phone, address } = settings.contact;
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   const goContact = (e: MouseEvent) => {
     e.preventDefault();
@@ -170,9 +172,19 @@ export default function Footer() {
 
         {/* ───────── BOTTOM BAR ───────── */}
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
-          <p className="text-xs text-white/40">
-            © {year} OCEAN LED. All rights reserved.
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <p className="text-xs text-white/40">
+              © {year} OCEAN LED. All rights reserved.
+            </p>
+            <span className="hidden h-3 w-px bg-white/15 sm:block" />
+            <button
+              type="button"
+              onClick={() => setPrivacyOpen(true)}
+              className="text-xs text-white/50 transition-colors hover:text-ocean-cyan"
+            >
+              Privacy Policy
+            </button>
+          </div>
           <p className="text-xs text-white/50">
             LED Displays · Video Walls · Digital Signage
           </p>
@@ -186,6 +198,7 @@ export default function Footer() {
           </button>
         </div>
       </div>
+      <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </footer>
   );
 }
