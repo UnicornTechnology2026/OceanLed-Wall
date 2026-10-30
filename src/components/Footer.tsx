@@ -5,6 +5,7 @@ import type { Page } from "../router";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import oceanLogo from "../assets/logo.png";
+import { openCookieSettings } from "../lib/cookies";
 
 const FOOTER_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
@@ -188,6 +189,14 @@ export default function Footer() {
             >
               Manage consent
             </a>
+            <span className="hidden h-3 w-px bg-white/15 sm:block" />
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="text-xs text-white/50 transition-colors hover:text-ocean-cyan"
+            >
+              Cookie settings
+            </button>
           </div>
           <p className="text-xs text-white/50">
             LED Displays · Video Walls · Digital Signage

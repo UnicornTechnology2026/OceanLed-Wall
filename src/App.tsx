@@ -26,6 +26,7 @@ import PanIndiaDelivery from "./components/PanIndiaDelivery";
 import ScrollProcess from "./components/ScrollProcess";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import ManageConsent from "./components/ManageConsent";
+import CookieBanner from "./components/CookieBanner";
 
 const LedConfigurator = lazy(() => import("./components/LedConfigurator"));
 
@@ -105,6 +106,7 @@ function MainSite({ onOpenAdmin }: { onOpenAdmin: () => void }) {
           {PAGE_CONTENT[page]}
         </main>
         <Footer />
+        <CookieBanner />
       </div>
     </>
   );

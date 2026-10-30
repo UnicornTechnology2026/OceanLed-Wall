@@ -1,6 +1,8 @@
 import { Mail, Phone, MapPin, ShieldCheck } from "lucide-react";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import { pageHref } from "../router";
+import GrievanceSection from "./GrievanceSection";
+import { openCookieSettings } from "../lib/cookies";
 
 /** Update this date every time the policy text below changes. */
 export const PRIVACY_LAST_UPDATED = "30 October 2026";
@@ -294,8 +296,9 @@ export default function PrivacyPolicy() {
               >
                 {email}
               </a>
-              . We may ask you to verify your identity first, and we aim to
-              reply within 30 days.
+              . We may ask you to verify your identity first, and we acknowledge
+              your request within 48 hours and resolve it within 90 days at
+              most.
             </p>
           </section>
 
@@ -368,6 +371,56 @@ export default function PrivacyPolicy() {
                 <span>{address}</span>
               </li>
             </ul>
+          </section>
+
+          <GrievanceSection />
+
+          <section className="space-y-3">
+            <H2 id="cookies">Cookies and tracking tools</H2>
+            <p>
+              When you first visit, we ask whether you accept optional cookies.
+              Nothing optional is loaded until you agree. These are the tools we
+              use:
+            </p>
+            <ul className="list-disc space-y-1.5 pl-5">
+              <li>
+                <strong className="font-semibold text-white">
+                  Essential (always on):
+                </strong>{" "}
+                stores your cookie choice and keeps the site working. No
+                tracking.
+              </li>
+              <li>
+                <strong className="font-semibold text-white">
+                  Google Analytics 4 (only if you accept analytics):
+                </strong>{" "}
+                shows us which pages are visited and how, so we can improve the
+                site. Provider: Google.
+              </li>
+              <li>
+                <strong className="font-semibold text-white">
+                  Meta Pixel (only if you accept advertising):
+                </strong>{" "}
+                measures our Facebook and Instagram ads and shows relevant ads.
+                Provider: Meta.
+              </li>
+              <li>
+                We do not currently use a third-party chat widget. If we add
+                one, we will list it here first.
+              </li>
+            </ul>
+            <p>
+              You can change or withdraw your choice at any time using{" "}
+              <button
+                type="button"
+                onClick={openCookieSettings}
+                className="text-ocean-cyan hover:underline"
+              >
+                Cookie settings
+              </button>{" "}
+              here or in the footer. If you withdraw, we delete the tracking
+              cookies and stop loading those tools.
+            </p>
           </section>
         </div>
       </div>
