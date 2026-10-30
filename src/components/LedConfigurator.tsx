@@ -445,6 +445,7 @@ const chipClass = (active: boolean) =>
   }`;
 
 export default function LedConfigurator() {
+  const { addInquiry } = useSiteSettings();
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
   const [webglFailed, setWebglFailed] = useState(false);
   const [form, setForm] = useState<QuoteForm>({
@@ -456,6 +457,7 @@ export default function LedConfigurator() {
   const [errors, setErrors] = useState<QuoteErrors>({});
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [consent, setConsent] = useState<ConsentChoices>(EMPTY_CONSENT);
   const [consentError, setConsentError] = useState("");
 
@@ -638,6 +640,27 @@ export default function LedConfigurator() {
     ];
 
     setSubmitting(true);
+    setSubmitError("");
+    try {
+      await addInquiry({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        message: lines.join("\n"),
+        source: "led_configurator",
+        configuration,
+        consent,
+      });
+      setSent(true);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't send your request. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const reset = () => {
@@ -646,6 +669,7 @@ export default function LedConfigurator() {
     setConsent(EMPTY_CONSENT);
     setConsentError("");
     setErrors({});
+    setSubmitError("");
     setSent(false);
   };
 
@@ -1104,6 +1128,12 @@ export default function LedConfigurator() {
                       placeholder="Custom shape or other requirements (optional)"
                       className={`${fieldClass} resize-none border-white/10`}
                     />
+
+                    {submitError && (
+                      <p role="alert" className="text-sm text-red-400">
+                        {submitError}
+                      </p>
+                    )}
 
                     <button
                       type="submit"
