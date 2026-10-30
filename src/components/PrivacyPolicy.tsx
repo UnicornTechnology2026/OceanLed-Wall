@@ -21,7 +21,7 @@ const DATA_ROWS: DataRow[] = [
     collected: "Inquiry form, quote request, orders",
     purpose: "To address you, prepare quotations and deliver your order.",
     retention:
-      "2 years after your last inquiry; 6 years if you place an order (accounting records).",
+      "2 years after your last inquiry, 6 years if you place an order (accounting records).",
     sharedWith: "CRM tool, courier / installation partners (only for orders).",
   },
   {
@@ -29,7 +29,7 @@ const DATA_ROWS: DataRow[] = [
     collected: "Inquiry form, quote request, orders",
     purpose: "Support, quotation follow-up, delivery coordination.",
     retention:
-      "2 years after your last inquiry; 6 years if you place an order.",
+      "2 years after your last inquiry, 6 years if you place an order.",
     sharedWith: "CRM tool, courier / installation partners (only for orders).",
   },
   {
@@ -38,7 +38,7 @@ const DATA_ROWS: DataRow[] = [
     purpose:
       "Replying to inquiries, sending quotations, order and support updates. Marketing emails only if you opt in.",
     retention:
-      "2 years after your last inquiry; until you withdraw consent for marketing.",
+      "2 years after your last inquiry, until you withdraw consent for marketing.",
     sharedWith: "CRM tool, email service provider.",
   },
   {
@@ -74,22 +74,9 @@ const DATA_ROWS: DataRow[] = [
     sharedWith:
       "Analytics provider and ad platforms (only if you accept those cookies).",
   },
-  {
-    data: "Payment information",
-    collected:
-      "Only when you pay online. We never see or store your full card, UPI PIN or net-banking details.",
-    purpose: "Processing payment for your order and issuing invoices.",
-    retention:
-      "Transaction records (not card details) for 6 years, as required by tax law.",
-    sharedWith: "Payment gateway / bank.",
-  },
 ];
 
 const SHARING: { who: string; what: string }[] = [
-  {
-    who: "Payment gateway / bank",
-    what: "Order amount and payer details needed to complete a payment.",
-  },
   {
     who: "Courier and logistics partners",
     what: "Name, phone number and delivery address, to deliver and install your order.",
@@ -160,12 +147,12 @@ export default function PrivacyPolicy() {
           <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
 
           <p>
-            OCEAN LED (“we”, “us”) respects your privacy. This policy explains
-            what personal data we collect through this website, why we collect
-            it, how long we keep it, who we share it with, and how you can
-            exercise your rights under the Digital Personal Data Protection Act,
-            2023 (“DPDP Act”). We process your data only with your consent or
-            for other purposes the law permits.
+            OCEAN LED respects your privacy. This policy explains what personal
+            data we collect through this website, why we collect it, how long we
+            keep it, who we share it with, and how you can exercise your rights
+            under the Digital Personal Data Protection Act, 2023 (“DPDP Act”).
+            We process your data only with your consent or for other purposes
+            the law permits.
           </p>
 
           <section className="space-y-4">
@@ -371,6 +358,50 @@ export default function PrivacyPolicy() {
                 <span>{address}</span>
               </li>
             </ul>
+          </section>
+
+          <section className="space-y-3">
+            <H2 id="third-parties">Third-party services we use</H2>
+            <p>
+              We use the following companies to run this website. They act on
+              our behalf and may process your data as described:
+            </p>
+            <ul className="list-disc space-y-1.5 pl-5">
+              <li>
+                <strong className="font-semibold text-white">Vercel</strong>:
+                hosts the website; receives your IP address and server logs.
+              </li>
+              <li>
+                <strong className="font-semibold text-white">Supabase</strong>:
+                stores inquiries, consent records and website content, and
+                handles admin login.
+              </li>
+              <li>
+                <strong className="font-semibold text-white">
+                  Google Fonts
+                </strong>
+                : delivers the website font; receives your IP address when the
+                page loads.
+              </li>
+              <li>
+                <strong className="font-semibold text-white">
+                  Google Maps
+                </strong>
+                : shows our office location on the Contact page; Google may set
+                cookies and receive your IP address.
+              </li>
+              <li>
+                <strong className="font-semibold text-white">
+                  Google Analytics and Meta Pixel
+                </strong>
+                : only if you accept analytics or advertising cookies (see
+                Cookies above).
+              </li>
+            </ul>
+            <p>
+              These providers may process data on servers outside India. Each
+              has its own privacy policy and we ask them to protect your data.
+            </p>
           </section>
 
           <GrievanceSection />
