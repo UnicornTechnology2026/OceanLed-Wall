@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { Send, CheckCircle, Mail, Phone, MapPin } from "lucide-react";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
-import ConsentFields from "./ConsentFields";
+import ConsentFields, { focusRequiredConsent } from "./ConsentFields";
 import { EMPTY_CONSENT, validateConsent } from "../lib/consent";
 import type { ConsentChoices } from "../lib/consent";
 
@@ -57,7 +57,11 @@ export default function Contact() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (submitting || !validate()) return;
+    if (submitting) return;
+    if (!validate()) {
+      if (!consent.service) focusRequiredConsent(e.currentTarget);
+      return;
+    }
     setSubmitting(true);
     setSubmitError("");
     try {

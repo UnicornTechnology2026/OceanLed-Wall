@@ -41,6 +41,10 @@ const PAGE_META: Record<Page, { title: string; description: string }> = {
     description:
       "Withdraw your consent for marketing emails or WhatsApp updates from OCEAN LED in one step.",
   },
+  "not-found": {
+    title: "Page not found | OCEAN LED",
+    description: "The page you are looking for is not available.",
+  },
 };
 
 function setTag(
@@ -107,11 +111,12 @@ function applyMeta(
 export function useSeo(page: Page) {
   useEffect(() => {
     const { title, description } = PAGE_META[page];
+    const notFound = page === "not-found";
     applyMeta(
       title,
       description,
-      pageHref(page),
-      "index, follow, max-image-preview:large",
+      notFound ? window.location.pathname : pageHref(page),
+      notFound ? "noindex, follow" : "index, follow, max-image-preview:large",
     );
   }, [page]);
 }

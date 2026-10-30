@@ -27,6 +27,7 @@ import ScrollProcess from "./components/ScrollProcess";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import ManageConsent from "./components/ManageConsent";
 import CookieBanner from "./components/CookieBanner";
+import NotFound from "./components/NotFound";
 
 const LedConfigurator = lazy(() => import("./components/LedConfigurator"));
 
@@ -63,6 +64,7 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
   ),
   "privacy-policy": <PrivacyPolicy />,
   "manage-consent": <ManageConsent />,
+  "not-found": <NotFound />,
 };
 
 const LOADER_KEY = "ocean_loader_seen";

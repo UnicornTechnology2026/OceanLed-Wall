@@ -10,19 +10,21 @@ export const PAGES = [
   "manage-consent",
 ] as const;
 
-export type Page = (typeof PAGES)[number];
+export type Page = (typeof PAGES)[number] | "not-found";
 
 export function pageHref(page: Page): string {
-  return page === "home" ? "/" : `/${page}`;
+  return page === "home" || page === "not-found" ? "/" : `/${page}`;
 }
 
-function pageFromPath(pathname: string): Page | null {
+function pageFromPath(pathname: string): (typeof PAGES)[number] | null {
   const name = pathname.replace(/^\/+|\/+$/g, "") || "home";
-  return (PAGES as readonly string[]).includes(name) ? (name as Page) : null;
+  return (PAGES as readonly string[]).includes(name)
+    ? (name as (typeof PAGES)[number])
+    : null;
 }
 
 export function getPageFromLocation(): Page {
-  return pageFromPath(window.location.pathname) ?? "home";
+  return pageFromPath(window.location.pathname) ?? "not-found";
 }
 
 // Old links like /#/contact -> /contact (keeps previously shared URLs working)

@@ -13,7 +13,7 @@ import {
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import type { LedConfiguration } from "../context/SiteSettingsContext";
-import ConsentFields from "./ConsentFields";
+import ConsentFields, { focusRequiredConsent } from "./ConsentFields";
 import { EMPTY_CONSENT, validateConsent } from "../lib/consent";
 import type { ConsentChoices } from "../lib/consent";
 
@@ -582,7 +582,11 @@ export default function LedConfigurator() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (submitting || !validate()) return;
+    if (submitting) return;
+    if (!validate()) {
+      if (!consent.service) focusRequiredConsent(e.currentTarget);
+      return;
+    }
 
     const shapeLabel =
       SHAPES.find((s) => s.key === config.shape)?.label ?? config.shape;

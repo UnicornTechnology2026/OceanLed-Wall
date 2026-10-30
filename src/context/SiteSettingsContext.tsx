@@ -109,10 +109,8 @@ export type LoadStatus = "loading" | "ready" | "error" | "unconfigured";
 export interface SiteSettingsContextValue {
   settings: SiteSettings;
   status: LoadStatus;
-  reloadSettings: () => Promise<void>;
 
   /** false until the saved session has been checked (avoids a login flash) */
-  authReady: boolean;
   isAdmin: boolean;
   /** resolves to an error message, or null on success */
   login: (email: string, password: string) => Promise<string | null>;
@@ -258,7 +256,6 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [consents, setConsents] = useState<ConsentEvent[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [authReady, setAuthReady] = useState(!isSupabaseConfigured);
 
   /* ── settings + projects (public read) ── */
   const reloadSettings = useCallback(async () => {
@@ -309,7 +306,6 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       }
       if (!active || id !== run) return;
       setIsAdmin(admin);
-      setAuthReady(true);
     });
 
     return () => {
@@ -503,8 +499,6 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       value={{
         settings,
         status,
-        reloadSettings,
-        authReady,
         isAdmin,
         login,
         logout,
