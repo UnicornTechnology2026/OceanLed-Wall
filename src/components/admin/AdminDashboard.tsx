@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   LogOut,
@@ -16,6 +16,10 @@ import {
   ChevronRight,
   RefreshCw,
   AlertCircle,
+  Copy,
+  Check,
+  MessageSquareText,
+  ShieldCheck,
 } from "lucide-react";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
 import type {
@@ -25,6 +29,33 @@ import type {
 import oceanLogo from "../../assets/logo.png";
 import MultiImageUpload from "./MultiImageUpload";
 import { deleteImageByUrl } from "../../lib/supabase";
+import { currentConsent, PURPOSE_LABEL } from "../../lib/consent";
+
+const COMMON_MESSAGE_KEY = "oceanled_common_message";
+const DEFAULT_COMMON_MESSAGE =
+  "Hello,\n\nThank you for contacting OCEAN LED. We have received your inquiry and our team will get back to you shortly with the details.\n\nRegards,\nOCEAN LED Team";
+
+/** Copy text to the clipboard (with a fallback for non-secure contexts). */
+async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+}
 
 const inputCls =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-ocean-cyan/50 focus:bg-ocean-cyan/[0.03] focus:ring-2 focus:ring-ocean-cyan/30";
@@ -61,6 +92,8 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
     markInquiryRead,
     deleteInquiry,
     clearInquiries,
+    consents,
+    refreshConsents,
   } = useSiteSettings();
 
   const [contact, setContact] = useState<ContactSettings>({
@@ -75,6 +108,36 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
   const [error, setError] = useState("");
   const [tab, setTab] = useState("inquiries");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [commonMessage, setCommonMessage] = useState<string>(() => {
+    try {
+      return localStorage.getItem(COMMON_MESSAGE_KEY) ?? DEFAULT_COMMON_MESSAGE;
+    } catch {
+      return DEFAULT_COMMON_MESSAGE;
+    }
+  });
+  const [copied, setCopied] = useState(false);
+  const [consentSearch, setConsentSearch] = useState("");
+  const copyTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(COMMON_MESSAGE_KEY, commonMessage);
+    } catch {
+      /* storage unavailable – message just won't persist */
+    }
+  }, [commonMessage]);
+
+  useEffect(() => () => window.clearTimeout(copyTimer.current), []);
+
+  const handleCopyCommon = async () => {
+    if (!(await copyText(commonMessage))) {
+      setError("Could not copy the message. Please copy it manually.");
+      return;
+    }
+    setCopied(true);
+    window.clearTimeout(copyTimer.current);
+    copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
+  };
 
   const unreadCount = inquiries.filter((i) => !i.read).length;
 
@@ -217,6 +280,13 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
       icon: ImageIcon,
       title: "Project photos",
       sub: "Upload photos for the Projects page. Uploads and deletions update the website immediately.",
+    },
+    {
+      id: "consent",
+      label: "Consent Log",
+      icon: ShieldCheck,
+      title: "Consent records",
+      sub: "Who agreed to what, and when. Records are append-only: they cannot be edited or deleted here.",
     },
   ];
 
@@ -581,15 +651,76 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
                               {selected.message}
                             </p>
                           </div>
+                          {(() => {
+                            const st = currentConsent(
+                              consents,
+                              selected.email,
+                              selected.phone,
+                            );
+                            return (
+                              <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                                <span className="text-[10px] font-medium uppercase tracking-wider text-white/40">
+                                  Consent now
+                                </span>
+                                {(["marketing_email", "whatsapp"] as const).map(
+                                  (k) => (
+                                    <span
+                                      key={k}
+                                      className={`rounded-full px-2.5 py-1 font-semibold ${
+                                        st[k]
+                                          ? "bg-emerald-400/15 text-emerald-300"
+                                          : "bg-white/10 text-white/50"
+                                      }`}
+                                    >
+                                      {PURPOSE_LABEL[k]}: {st[k] ? "Yes" : "No"}
+                                    </span>
+                                  ),
+                                )}
+                              </div>
+                            );
+                          })()}
 
-                          <a
-                            href={`mailto:${selected.email}?subject=Re: Your inquiry to OCEAN LED`}
-                            className="inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
-                          >
-                            <Mail size={15} />
-                            Reply by Email
-                            <ChevronRight size={15} />
-                          </a>
+                          <div className="rounded-xl border border-ocean-cyan/25 bg-ocean-cyan/3 p-4">
+                            <div className="mb-2 flex items-center justify-between gap-3">
+                              <p className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-white/40">
+                                <MessageSquareText size={12} /> Common message
+                              </p>
+                              <button
+                                type="button"
+                                onClick={handleCopyCommon}
+                                disabled={!commonMessage.trim()}
+                                className="inline-flex items-center gap-1.5 rounded-full bg-ocean-cyan px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-black transition hover:-translate-y-0.5 disabled:opacity-50"
+                              >
+                                {copied ? (
+                                  <Check size={12} />
+                                ) : (
+                                  <Copy size={12} />
+                                )}
+                                {copied ? "Copied!" : "Copy"}
+                              </button>
+                            </div>
+                            <textarea
+                              value={commonMessage}
+                              onChange={(e) => setCommonMessage(e.target.value)}
+                              rows={6}
+                              placeholder="Type the message you send to every customer…"
+                              className={`${inputCls} resize-y leading-relaxed`}
+                            />
+                            <p className="mt-1.5 text-[11px] text-white/35">
+                              Edit here — saved automatically.
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-3">
+                            <a
+                              href={`mailto:${selected.email}?subject=Re: Your inquiry to OCEAN LED`}
+                              className="inline-flex items-center gap-3 rounded-md bg-ocean-cyan px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-black shadow-[0_0_30px_rgba(0,229,255,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_0_45px_rgba(0,229,255,0.55)]"
+                            >
+                              <Mail size={15} />
+                              Reply by Email
+                              <ChevronRight size={15} />
+                            </a>
+                          </div>
                         </Card>
                       ) : (
                         <Card className="flex min-h-72 flex-col items-center justify-center text-center">
@@ -655,6 +786,112 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
               </Card>
             )}
 
+            {/* ───────── CONSENT LOG TAB ───────── */}
+            {tab === "consent" && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <input
+                    type="search"
+                    value={consentSearch}
+                    onChange={(e) => setConsentSearch(e.target.value)}
+                    placeholder="Search by name, email or phone…"
+                    aria-label="Search consent records"
+                    className={`${inputCls} max-w-sm`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      refreshConsents().catch((err) =>
+                        setError(
+                          `Could not load consent records: ${messageOf(err)}`,
+                        ),
+                      )
+                    }
+                    className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/60 transition hover:border-ocean-cyan/40 hover:text-ocean-cyan"
+                  >
+                    <RefreshCw size={12} />
+                    Refresh
+                  </button>
+                </div>
+
+                {(() => {
+                  const q = consentSearch.trim().toLowerCase();
+                  const rows = q
+                    ? consents.filter((c) =>
+                        [c.name, c.email, c.phone]
+                          .join(" ")
+                          .toLowerCase()
+                          .includes(q),
+                      )
+                    : consents;
+                  if (rows.length === 0)
+                    return (
+                      <Card className="py-12 text-center text-sm text-white/50">
+                        No consent records yet.
+                      </Card>
+                    );
+                  return (
+                    <Card className="p-0 sm:p-0">
+                      <div className="overflow-x-auto">
+                        <table className="w-full min-w-180 text-left text-xs">
+                          <thead className="border-b border-white/10 text-[10px] uppercase tracking-wider text-white/40">
+                            <tr>
+                              <th className="px-4 py-3">When</th>
+                              <th className="px-4 py-3">Who</th>
+                              <th className="px-4 py-3">Consent for</th>
+
+                              <th className="px-4 py-3">Action</th>
+                              <th className="px-4 py-3">Source</th>
+                              <th className="px-4 py-3">Policy</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/5 text-white/70">
+                            {rows.map((c) => (
+                              <tr key={c.id} title={c.consentText}>
+                                <td className="whitespace-nowrap px-4 py-3">
+                                  {formatDate(c.createdAt)}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <span className="block font-semibold text-white">
+                                    {c.name || "—"}
+                                  </span>
+                                  <span className="block break-all text-white/50">
+                                    {c.email || "—"}
+                                  </span>
+                                  <span className="block text-white/50">
+                                    {c.phone || ""}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3">
+                                  {PURPOSE_LABEL[c.purpose]}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <span
+                                    className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${
+                                      c.action === "granted"
+                                        ? "bg-emerald-400/15 text-emerald-300"
+                                        : "bg-red-400/15 text-red-300"
+                                    }`}
+                                  >
+                                    {c.action}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3">{c.source}</td>
+                                <td className="px-4 py-3">{c.policyVersion}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </Card>
+                  );
+                })()}
+                <p className="text-[11px] text-white/35">
+                  Hover a row to see the exact wording the person agreed to.
+                </p>
+              </div>
+            )}
+
             {/* ───────── PROJECTS TAB ───────── */}
             {tab === "projects" && (
               <div className="space-y-6">
@@ -699,7 +936,7 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
             )}
 
             {/* ───────── SAVE BAR ───────── */}
-            {tab !== "inquiries" && (
+            {tab !== "inquiries" && tab !== "consent" && (
               <div className="sticky bottom-4 z-30 mt-8">
                 <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-[#0a1220]/90 p-3 shadow-[0_0_60px_rgba(0,0,0,0.6)] backdrop-blur-md">
                   <button

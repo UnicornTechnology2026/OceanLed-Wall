@@ -13,6 +13,9 @@ import {
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import type { LedConfiguration } from "../context/SiteSettingsContext";
+import ConsentFields from "./ConsentFields";
+import { EMPTY_CONSENT, validateConsent } from "../lib/consent";
+import type { ConsentChoices } from "../lib/consent";
 
 /* ------------------------------------------------------------------ */
 /* Types and constants                                                 */
@@ -442,8 +445,6 @@ const chipClass = (active: boolean) =>
   }`;
 
 export default function LedConfigurator() {
-  const { addInquiry } = useSiteSettings();
-
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
   const [webglFailed, setWebglFailed] = useState(false);
   const [form, setForm] = useState<QuoteForm>({
@@ -455,7 +456,8 @@ export default function LedConfigurator() {
   const [errors, setErrors] = useState<QuoteErrors>({});
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [consent, setConsent] = useState<ConsentChoices>(EMPTY_CONSENT);
+  const [consentError, setConsentError] = useState("");
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const three = useRef<ThreeState | null>(null);
@@ -571,7 +573,9 @@ export default function LedConfigurator() {
     if (form.email.trim() && !/^\S+@\S+\.\S+$/.test(form.email))
       next.email = "Enter a valid email";
     setErrors(next);
-    return Object.keys(next).length === 0;
+    const ce = validateConsent(consent, form.email, form.phone);
+    setConsentError(ce);
+    return Object.keys(next).length === 0 && !ce;
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -634,33 +638,14 @@ export default function LedConfigurator() {
     ];
 
     setSubmitting(true);
-    setSubmitError("");
-    try {
-      await addInquiry({
-        name: form.name.trim(),
-        phone: form.phone.trim(),
-        email: form.email.trim(),
-        message: lines.join("\n"),
-        source: "led_configurator",
-        configuration,
-      });
-      setSent(true);
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error
-          ? err.message
-          : "We couldn't send your request. Please try again.",
-      );
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   const reset = () => {
     setConfig(DEFAULT_CONFIG);
     setForm({ name: "", phone: "", email: "", notes: "" });
+    setConsent(EMPTY_CONSENT);
+    setConsentError("");
     setErrors({});
-    setSubmitError("");
     setSent(false);
   };
 
@@ -1101,6 +1086,14 @@ export default function LedConfigurator() {
                         </p>
                       )}
                     </div>
+                    <ConsentFields
+                      value={consent}
+                      onChange={(c) => {
+                        setConsent(c);
+                        setConsentError("");
+                      }}
+                      error={consentError}
+                    />
                     <textarea
                       aria-label="Custom requirements"
                       rows={4}
@@ -1111,15 +1104,6 @@ export default function LedConfigurator() {
                       placeholder="Custom shape or other requirements (optional)"
                       className={`${fieldClass} resize-none border-white/10`}
                     />
-
-                    {submitError && (
-                      <p
-                        role="alert"
-                        className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300"
-                      >
-                        {submitError}
-                      </p>
-                    )}
 
                     <button
                       type="submit"

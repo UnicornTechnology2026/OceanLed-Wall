@@ -3,6 +3,9 @@ import type { ChangeEvent, FormEvent } from "react";
 import { Send, CheckCircle, Mail, Phone, MapPin } from "lucide-react";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
+import ConsentFields from "./ConsentFields";
+import { EMPTY_CONSENT, validateConsent } from "../lib/consent";
+import type { ConsentChoices } from "../lib/consent";
 
 type FormField = "name" | "email" | "phone" | "message";
 type FormErrors = Partial<Record<FormField, string>>;
@@ -24,6 +27,10 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  const [consent, setConsent] = useState<ConsentChoices>(EMPTY_CONSENT);
+  const [consentError, setConsentError] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
   const validate = () => {
     const next: FormErrors = {};
     if (!form.name.trim()) next.name = "Name is required";
@@ -34,7 +41,9 @@ export default function Contact() {
     }
     if (!form.message.trim()) next.message = "Message is required";
     setErrors(next);
-    return Object.keys(next).length === 0;
+    const ce = validateConsent(consent, form.email, form.phone);
+    setConsentError(ce);
+    return Object.keys(next).length === 0 && !ce;
   };
 
   const handleChange = (
@@ -46,21 +55,31 @@ export default function Contact() {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (submitting || !validate()) return;
     setSubmitting(true);
-    setTimeout(() => {
-      addInquiry({
+    setSubmitError("");
+    try {
+      await addInquiry({
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
         message: form.message.trim(),
+        consent,
       });
-      setSubmitting(false);
       setSubmitted(true);
       setForm({ name: "", email: "", phone: "", message: "" });
-    }, 900);
+      setConsent(EMPTY_CONSENT);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't send your message. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const INFO = [
@@ -281,6 +300,20 @@ export default function Contact() {
                     </>
                   )}
                 </button>
+                <ConsentFields
+                  value={consent}
+                  onChange={(c) => {
+                    setConsent(c);
+                    setConsentError("");
+                  }}
+                  error={consentError}
+                />
+
+                {submitError && (
+                  <p role="alert" className="text-sm text-red-400">
+                    {submitError}
+                  </p>
+                )}
               </form>
             )}
           </div>

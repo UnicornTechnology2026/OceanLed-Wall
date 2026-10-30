@@ -6,6 +6,8 @@ export const PAGES = [
   "projects",
   "about",
   "contact",
+  "privacy-policy",
+  "manage-consent",
 ] as const;
 
 export type Page = (typeof PAGES)[number];

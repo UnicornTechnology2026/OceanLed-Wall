@@ -24,6 +24,8 @@ import ScrollProgress from "./components/ScrollProgress";
 import PortfolioPortal from "./components/PortfolioPortal";
 import PanIndiaDelivery from "./components/PanIndiaDelivery";
 import ScrollProcess from "./components/ScrollProcess";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import ManageConsent from "./components/ManageConsent";
 
 const LedConfigurator = lazy(() => import("./components/LedConfigurator"));
 
@@ -58,6 +60,8 @@ const PAGE_CONTENT: Record<Page, ReactNode> = {
       <OfficeMap />
     </>
   ),
+  "privacy-policy": <PrivacyPolicy />,
+  "manage-consent": <ManageConsent />,
 };
 
 const LOADER_KEY = "ocean_loader_seen";

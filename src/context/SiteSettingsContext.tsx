@@ -18,6 +18,12 @@ import {
   dbUpdate,
   dbDelete,
 } from "../lib/supabase";
+import {
+  recordConsent,
+  grantedEvents,
+  rowToConsentEvent,
+} from "../lib/consent";
+import type { ConsentChoices, ConsentEvent, ConsentRow } from "../lib/consent";
 
 export interface ContactSettings {
   email: string;
@@ -89,6 +95,7 @@ export type NewInquiry = Omit<
 > & {
   source?: string;
   configuration?: LedConfiguration | null;
+  consent: ConsentChoices;
 };
 
 /**
@@ -118,6 +125,10 @@ export interface SiteSettingsContextValue {
   markInquiryRead: (id: string) => Promise<void>;
   deleteInquiry: (id: string) => Promise<void>;
   clearInquiries: () => Promise<void>;
+
+  /** admin: append-only log of who consented to what, and when */
+  consents: ConsentEvent[];
+  refreshConsents: () => Promise<void>;
 
   /* admin saves – all throw an Error on failure */
   saveContact: (contact: ContactSettings) => Promise<void>;
@@ -245,6 +256,7 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
     isSupabaseConfigured ? "loading" : "unconfigured",
   );
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [consents, setConsents] = useState<ConsentEvent[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [authReady, setAuthReady] = useState(!isSupabaseConfigured);
 
@@ -354,8 +366,37 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
     );
   }, [isAdmin, refreshInquiries]);
 
+  const refreshConsents = useCallback(async () => {
+    const rows = await dbSelect<ConsentRow>(
+      "consent_events",
+      "select=*&order=created_at.desc&limit=2000",
+    );
+    setConsents(rows.map(rowToConsentEvent));
+  }, []);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      setConsents([]);
+      return;
+    }
+    refreshConsents().catch((err) =>
+      console.error("Failed to load consent records", err),
+    );
+  }, [isAdmin, refreshConsents]);
+
   const addInquiry = useCallback(async (inquiry: NewInquiry) => {
+    if (!inquiry.consent.service) {
+      throw new Error(
+        "Please agree to us using your details for this request.",
+      );
+    }
     try {
+      // Record consent first: no consent record, no processing.
+      await recordConsent(
+        { name: inquiry.name, email: inquiry.email, phone: inquiry.phone },
+        grantedEvents(inquiry.consent),
+        inquiry.source ?? "contact",
+      );
       await dbInsert("inquiries", {
         name: inquiry.name,
         email: inquiry.email,
@@ -477,6 +518,8 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
         saveAbout,
         saveProjects,
         resetSettings,
+        consents,
+        refreshConsents,
       }}
     >
       {children}

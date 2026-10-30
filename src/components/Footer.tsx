@@ -1,11 +1,10 @@
-import { useState, type MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import { ArrowUp, Mail, Phone, MapPin, ChevronRight } from "lucide-react";
 import { navigate, pageHref } from "../router";
 import type { Page } from "../router";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import oceanLogo from "../assets/logo.png";
-import PrivacyModal from "./PrivacyModal";
 
 const FOOTER_LINKS: { label: string; page: Page }[] = [
   { label: "Home", page: "home" },
@@ -19,7 +18,6 @@ export default function Footer() {
   const year = new Date().getFullYear();
   const { settings } = useSiteSettings();
   const { email, phone, address } = settings.contact;
-  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   const goContact = (e: MouseEvent) => {
     e.preventDefault();
@@ -177,13 +175,19 @@ export default function Footer() {
               © {year} OCEAN LED. All rights reserved.
             </p>
             <span className="hidden h-3 w-px bg-white/15 sm:block" />
-            <button
-              type="button"
-              onClick={() => setPrivacyOpen(true)}
+            <a
+              href={pageHref("privacy-policy")}
               className="text-xs text-white/50 transition-colors hover:text-ocean-cyan"
             >
               Privacy Policy
-            </button>
+            </a>
+            <span className="hidden h-3 w-px bg-white/15 sm:block" />
+            <a
+              href={pageHref("manage-consent")}
+              className="text-xs text-white/50 transition-colors hover:text-ocean-cyan"
+            >
+              Manage consent
+            </a>
           </div>
           <p className="text-xs text-white/50">
             LED Displays · Video Walls · Digital Signage
@@ -198,7 +202,6 @@ export default function Footer() {
           </button>
         </div>
       </div>
-      <PrivacyModal open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </footer>
   );
 }

@@ -31,6 +31,16 @@ const PAGE_META: Record<Page, { title: string; description: string }> = {
     description:
       "Contact OCEAN LED in Nagpur for LED video wall and digital signage quotes. Call, email or visit our office.",
   },
+  "privacy-policy": {
+    title: "Privacy Policy | OCEAN LED",
+    description:
+      "How OCEAN LED collects, uses, stores and protects your personal data, and how you can withdraw consent, use your rights or complain to the Data Protection Board.",
+  },
+  "manage-consent": {
+    title: "Manage Consent | OCEAN LED",
+    description:
+      "Withdraw your consent for marketing emails or WhatsApp updates from OCEAN LED in one step.",
+  },
 };
 
 function setTag(
