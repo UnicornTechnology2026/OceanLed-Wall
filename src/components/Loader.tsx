@@ -418,31 +418,47 @@ export default function Loader({ onComplete }: LoaderProps) {
         />
 
         {/* company name */}
-        <p
-          className="flex text-4xl font-bold uppercase sm:text-5xl md:text-6xl -mt-12"
-          aria-hidden="true"
-          style={{
-            color: "#f2f8ff",
-            textShadow:
-              "0 0 22px rgba(90,160,255,0.55), 0 2px 14px rgba(2,4,10,0.95)",
-          }}
-        >
-          {NAME.split("").map((ch, i) => (
-            <span
-              key={i}
-              className="inline-block transition-all duration-700 ease-out"
-              style={{
-                opacity: showName ? 1 : 0,
-                transform: showName ? "translateY(0)" : "translateY(10px)",
-                transitionDelay: "0ms",
-                marginRight: "0.14em",
-                minWidth: ch === " " ? "0.4em" : undefined,
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </p>
+        <div className="-mt-12 flex flex-col items-center">
+          <p
+            className="flex text-4xl font-bold uppercase sm:text-5xl md:text-6xl"
+            aria-hidden="true"
+            style={{
+              color: "#f2f8ff",
+              textShadow:
+                "0 0 22px rgba(90,160,255,0.55), 0 2px 14px rgba(2,4,10,0.95)",
+            }}
+          >
+            {NAME.split("").map((ch, i) => (
+              <span
+                key={i}
+                className="inline-block transition-all duration-700 ease-out"
+                style={{
+                  opacity: showName ? 1 : 0,
+                  transform: showName ? "translateY(0)" : "translateY(10px)",
+                  transitionDelay: "0ms",
+                  marginRight: "0.14em",
+                  minWidth: ch === " " ? "0.4em" : undefined,
+                }}
+              >
+                {ch === " " ? "\u00A0" : ch}
+              </span>
+            ))}
+          </p>
+
+          <p
+            className="mt-2 text-xs font-medium uppercase tracking-[0.4em] sm:text-sm md:text-base transition-all duration-700 ease-out"
+            aria-hidden="true"
+            style={{
+              color: "rgba(242,248,255,0.75)",
+              textShadow: "0 0 12px rgba(90,160,255,0.45)",
+              opacity: showName ? 1 : 0,
+              transform: showName ? "translateY(0)" : "translateY(10px)",
+              transitionDelay: "300ms",
+            }}
+          >
+            Video Wall
+          </p>
+        </div>
 
         <div
           className="mt-8 w-44 transition-opacity duration-700 sm:w-60"

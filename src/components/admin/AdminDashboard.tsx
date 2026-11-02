@@ -311,7 +311,10 @@ export default function AdminDashboard({ onBack }: { onBack: () => void }) {
             <p className="text-base font-extrabold uppercase leading-none tracking-wide text-white">
               OCEAN LED
             </p>
-            <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ocean-cyan">
+            <p className="mt-1 ml-1 text-[10px] font-medium uppercase leading-none tracking-[0.3em] text-white/70">
+              Video Wall
+            </p>
+            <p className="mt-1.5 text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-ocean-cyan/80">
               Admin Panel
             </p>
           </div>

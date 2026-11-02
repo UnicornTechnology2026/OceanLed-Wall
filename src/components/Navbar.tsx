@@ -73,8 +73,14 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
               className="absolute left-[-62.8%] top-[-69.9%] w-[224.2%] max-w-none"
             />
           </span>
-          <span className=" ml-2.5 text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
-            OCEAN LED
+
+          <span className="ml-2.5 flex flex-col leading-none">
+            <span className="text-lg font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
+              OCEAN LED
+            </span>
+            <span className="mt-1 ml-2.5 text-[10px] font-medium tracking-[0.3em] text-white/70 md:text-[11px]">
+              Video Wall
+            </span>
           </span>
         </a>
 

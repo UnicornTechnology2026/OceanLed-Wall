@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, ShieldCheck } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import { pageHref } from "../router";
 import GrievanceSection from "./GrievanceSection";
@@ -134,10 +134,6 @@ export default function PrivacyPolicy() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_15%_0%,rgba(0,229,255,0.08),transparent_55%)]" />
 
       <div className="relative mx-auto max-w-4xl">
-        <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-xs font-medium text-white/70 sm:text-sm">
-          <ShieldCheck size={14} className="text-ocean-cyan" />
-          Your data, your control
-        </span>
         <h1 className="mt-4 text-3xl font-extrabold uppercase tracking-tighter text-white sm:text-5xl">
           Privacy Policy
         </h1>

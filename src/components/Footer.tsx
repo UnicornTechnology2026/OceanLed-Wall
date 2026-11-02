@@ -70,11 +70,7 @@ export default function Footer() {
 
             <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
               <div>
-                <span className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-xs font-medium text-white/70 sm:text-sm">
-                  <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
-                  Let’s talk — free quote
-                </span>
-                <h2 className="mt-4 text-2xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl">
+                <h2 className="mt-2 text-2xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl">
                   Ready to light up
                   <span className="mt-2 block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
                     your space?
@@ -111,8 +107,13 @@ export default function Footer() {
                   loading="lazy"
                   className="h-28 w-28"
                 />
-                <span className="-ml-5 text-xl font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
-                  OCEAN LED
+                <span className="-ml-5 flex flex-col leading-none">
+                  <span className="text-xl font-extrabold uppercase tracking-wide text-white transition-colors group-hover:text-ocean-cyan">
+                    OCEAN LED
+                  </span>
+                  <span className="mt-1.5 ml-2.5 text-[11px] font-medium tracking-[0.3em] text-white/70">
+                    Video Wall
+                  </span>
                 </span>
               </a>
               <p className="-mt-6 max-w-sm text-sm leading-relaxed text-white/65">
@@ -192,7 +193,7 @@ export default function Footer() {
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <p className="text-xs text-white/40">
-              © {year} OCEAN LED. All rights reserved.
+              © {year} OCEAN LED video wall. All rights reserved.
             </p>
             <span className="hidden h-3 w-px bg-white/15 sm:block" />
             <a

@@ -1,4 +1,4 @@
-import { Sparkles, Cpu, Shield, Settings } from "lucide-react";
+import { ScanEye, Cpu, Shield, Settings } from "lucide-react";
 import type { MouseEvent } from "react";
 import Reveal from "./Reveal";
 import { navigate, pageHref } from "../router";
@@ -6,16 +6,16 @@ import aboutImage from "../assets/ocean_led_logo.png";
 
 const HIGHLIGHTS = [
   {
-    icon: Sparkles,
+    icon: ScanEye,
     title: "Visual Quality",
     description:
-      "Exceptional brightness, contrast, and color fidelity that make every pixel count.",
+      "Crisp resolution and true-to-life color that keep every image clear from any distance.",
   },
   {
     icon: Cpu,
     title: "Innovative Technology",
     description:
-      "Cutting-edge LED modules and processing systems designed for next-generation displays.",
+      "Advanced LED modules and smart processing that deliver flawless performance on every display.",
   },
   {
     icon: Shield,

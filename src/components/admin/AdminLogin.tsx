@@ -49,17 +49,17 @@ export default function AdminLogin({
         <div className="text-center lg:text-left">
           <div className="flex items-center justify-center gap-3 lg:justify-start">
             <img src={oceanLogo} alt="" className="h-28 w-28" />
-            <span className="-ml-8 text-xl font-extrabold uppercase tracking-wide text-white">
-              OCEAN LED
+            <span className="-ml-8 flex flex-col leading-none">
+              <span className="text-xl font-extrabold uppercase tracking-wide text-white">
+                OCEAN LED
+              </span>
+              <span className="mt-1.5 ml-2.5 text-[11px] font-medium uppercase tracking-[0.3em] text-white/70">
+                Video Wall
+              </span>
             </span>
           </div>
 
-          <span className=" inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/3 px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-white/70 sm:text-sm">
-            <span className="h-2.5 w-2.5 rounded-full bg-ocean-cyan shadow-[0_0_10px_rgba(0,229,255,0.9)]" />
-            Admin Panel // Secure Access
-          </span>
-
-          <h1 className="mt-5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
+          <h1 className="text-3xl font-extrabold uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl lg:text-6xl">
             Manage your
             <span className="block bg-linear-to-r from-slate-400 via-slate-300 to-ocean-cyan bg-clip-text text-transparent">
               website content.
