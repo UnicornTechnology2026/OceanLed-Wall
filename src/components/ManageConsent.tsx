@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
-import { CheckCircle, ShieldCheck } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { recordConsent, WITHDRAW_TEXT } from "../lib/consent";
 import type { ConsentPurpose } from "../lib/consent";
 import { pageHref } from "../router";
