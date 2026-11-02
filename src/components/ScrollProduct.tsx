@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { navigate } from "../router";
 
 // frame-10.jpeg doesn't exist in /public/frames, so skip it
-const FRAME_IDS = Array.from({ length: 36 }, (_, i) => i + 1).filter(
+const FRAME_IDS: number[] = Array.from({ length: 36 }, (_, i) => i + 1).filter(
   (n) => n !== 10,
 );
-const FRAME_COUNT = FRAME_IDS.length;
+const FRAME_COUNT: number = FRAME_IDS.length;
 const frameSrc = (i: number) => `/frames/frame-${FRAME_IDS[i]}.jpeg`;
 
 // Where the product sits horizontally in each source frame (0 = left, 1 = right).

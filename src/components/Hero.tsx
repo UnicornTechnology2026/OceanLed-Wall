@@ -1,10 +1,6 @@
 import { pageHref } from "../router";
 
 export default function Hero() {
-  // const scrollTo = (id: string) => {
-  //   document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
-  // };
-
   return (
     <section
       id="home"

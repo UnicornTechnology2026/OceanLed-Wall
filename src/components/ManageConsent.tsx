@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import { CheckCircle, ShieldCheck } from "lucide-react";
 import { recordConsent, WITHDRAW_TEXT } from "../lib/consent";
 import type { ConsentPurpose } from "../lib/consent";
@@ -48,7 +48,7 @@ export default function ManageConsent() {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
 
-  const submit = async (e: FormEvent) => {
+  const submit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     const picked = OPTIONS.filter((o) => chosen[o.purpose]);

@@ -1,11 +1,20 @@
 import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, SubmitEvent } from "react";
 import { Send, CheckCircle, Mail, Phone, MapPin } from "lucide-react";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import ConsentFields, { focusRequiredConsent } from "./ConsentFields";
 import { EMPTY_CONSENT, validateConsent } from "../lib/consent";
 import type { ConsentChoices } from "../lib/consent";
+
+import type { LucideIcon } from "lucide-react";
+
+interface InfoItem {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  href?: string;
+}
 
 type FormField = "name" | "email" | "phone" | "message";
 type FormErrors = Partial<Record<FormField, string>>;
@@ -55,7 +64,7 @@ export default function Contact() {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
     if (!validate()) {
@@ -126,7 +135,7 @@ export default function Contact() {
           </Reveal>
 
           <div className="mt-8 max-w-xl space-y-3">
-            {INFO.map((item, i) => {
+            {INFO.map((item: InfoItem, i: number) => {
               const content = (
                 <>
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan">

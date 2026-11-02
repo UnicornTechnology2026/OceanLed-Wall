@@ -6,16 +6,13 @@ export default function OfficeMap() {
   const { settings } = useSiteSettings();
   const { address } = settings.contact;
 
-  // remove these
-  // Exact office location (Ramna Maroti Nagar, Nagpur). Using coordinates makes the
-  // map and directions land on the office even if the typed address is not found.
-  const OFFICE_LAT_LNG = "21.1247832,79.1275856";
+  const OFFICE_LAT_LNG: string = "21.1247832,79.1275856";
 
   // Embedded map pinned to the office
-  const embedUrl = `https://www.google.com/maps?q=${OFFICE_LAT_LNG}&z=17&output=embed`;
+  const embedUrl: string = `https://www.google.com/maps?q=${OFFICE_LAT_LNG}&z=17&output=embed`;
 
   // "Get Directions" opens Google Maps with the office as the destination
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${OFFICE_LAT_LNG}`;
+  const directionsUrl: string = `https://www.google.com/maps/dir/?api=1&destination=${OFFICE_LAT_LNG}`;
 
   return (
     <section

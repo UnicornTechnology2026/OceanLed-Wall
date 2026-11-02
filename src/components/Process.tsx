@@ -1,9 +1,21 @@
-import { MessageSquare, PencilRuler, Truck, Headset } from "lucide-react";
+import {
+  MessageSquare,
+  PencilRuler,
+  Truck,
+  Headset,
+  type LucideIcon,
+} from "lucide-react";
 import type { MouseEvent } from "react";
 import Reveal from "./Reveal";
 import { navigate, pageHref } from "../router";
 
-const STEPS = [
+interface Step {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+const STEPS: Step[] = [
   {
     icon: MessageSquare,
     title: "Consultation",
@@ -87,7 +99,7 @@ export default function Process() {
               {/* vertical connecting line */}
               <div className="pointer-events-none absolute bottom-8 left-6.75 top-8 w-px bg-linear-to-b from-ocean-cyan/50 via-ocean-cyan/20 to-transparent" />
 
-              {STEPS.map((step, i) => (
+              {STEPS.map((step: Step, i: number) => (
                 <Reveal key={step.title} delay={i * 120}>
                   <li className="group relative flex items-start gap-4 rounded-xl border border-white/10 bg-white/3 p-4 transition hover:-translate-y-0.5 hover:border-ocean-cyan/40 hover:bg-ocean-cyan/4 sm:p-5">
                     <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan">

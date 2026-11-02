@@ -3,7 +3,7 @@ import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "./Reveal";
-import { useSiteSettings } from "../context/SiteSettingsContext";
+import { useSiteSettings, type Project } from "../context/SiteSettingsContext";
 import { navigate, pageHref } from "../router";
 
 export default function Projects() {
@@ -15,13 +15,16 @@ export default function Projects() {
   const close = useCallback(() => setOpenIndex(null), []);
   const prev = useCallback(
     () =>
-      setOpenIndex((i) =>
+      setOpenIndex((i: number | null) =>
         i === null ? i : (i - 1 + projects.length) % projects.length,
       ),
     [projects.length],
   );
   const next = useCallback(
-    () => setOpenIndex((i) => (i === null ? i : (i + 1) % projects.length)),
+    () =>
+      setOpenIndex((i: number | null) =>
+        i === null ? i : (i + 1) % projects.length,
+      ),
     [projects.length],
   );
 
@@ -99,7 +102,7 @@ export default function Projects() {
 
         {/* ───────── PHOTO GRID (images only) ───────── */}
         <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-          {projects.map((project, i) => (
+          {projects.map((project: Project, i: number) => (
             <Reveal
               key={`${project.image}-${i}`}
               delay={(i % 3) * 120}

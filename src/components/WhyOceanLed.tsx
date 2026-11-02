@@ -1,9 +1,15 @@
-import { Sparkles, Cpu, Shield, Settings } from "lucide-react";
+import { Sparkles, Cpu, Shield, Settings, type LucideIcon } from "lucide-react";
 import type { MouseEvent } from "react";
 import Reveal from "./Reveal";
 import { navigate, pageHref } from "../router";
 
-const REASONS = [
+interface Reason {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+const REASONS: Reason[] = [
   {
     icon: Sparkles,
     title: "Visual Quality",

@@ -6,6 +6,25 @@ import { navigate, pageHref } from "../router";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import Reveal from "./Reveal";
 
+/* ---------- Interface ---------- */
+interface Ring {
+  r: number;
+  size: number;
+  cls: string;
+  k: number;
+}
+
+interface Wedge {
+  i: number;
+  d: string;
+  mx: number;
+  my: number;
+  tx: number;
+  ty: number;
+  image: string;
+  label: string;
+}
+
 /* ---------- geometry helpers (viewBox centre = 400,400) ---------- */
 const CX = 400;
 const CY = 400;
@@ -30,12 +49,18 @@ const GAP = 1.5;
 const R_IN = 205;
 const R_OUT = 375;
 
-const WORDS = ["SPHERE LED", "CUBE LED", "TREE LED", "KINETICS", "ANAMORPHIC"];
+const WORDS: string[] = [
+  "SPHERE LED",
+  "CUBE LED",
+  "TREE LED",
+  "KINETICS",
+  "ANAMORPHIC",
+];
 const ringText = (k: number) =>
   [...WORDS.slice(k), ...WORDS.slice(0, k)].join("\u00A0\u00A0•\u00A0\u00A0") +
   "\u00A0\u00A0•\u00A0\u00A0";
 
-const RINGS = [
+const RINGS: Ring[] = [
   { r: 232, size: 38, cls: "pf-cw", k: 0 },
   { r: 294, size: 44, cls: "pf-ccw", k: 2 },
   { r: 358, size: 50, cls: "pf-cw", k: 4 },
@@ -68,7 +93,7 @@ export default function PortfolioPortal() {
     e.preventDefault();
     navigate("projects"); // opens the Portfolio tab
   };
-  const href = pageHref("projects");
+  const href: string = pageHref("projects");
 
   const wedges = Array.from({ length: WEDGES }, (_, i) => {
     const a1 = 180 - i * STEP - GAP;
@@ -89,7 +114,7 @@ export default function PortfolioPortal() {
     };
   });
 
-  const cubeImage = projects[1]?.image ?? projects[0]?.image ?? "";
+  const cubeImage: string = projects[1]?.image ?? projects[0]?.image ?? "";
 
   return (
     <section
@@ -205,7 +230,7 @@ export default function PortfolioPortal() {
                 <clipPath id="pf-top">
                   <rect x="0" y="0" width="800" height="400" />
                 </clipPath>
-                {wedges.map((w) => (
+                {wedges.map((w: Wedge) => (
                   <clipPath id={`pf-clip-${w.i}`} key={w.i}>
                     <path d={w.d} />
                   </clipPath>
@@ -232,7 +257,7 @@ export default function PortfolioPortal() {
 
               {/* Rotating category rings (visible in the bottom half only) */}
               <g clipPath="url(#pf-bottom)" className="pf-rings">
-                {RINGS.map((ring) => {
+                {RINGS.map((ring: Ring) => {
                   const id = `pf-path-${ring.r}`;
                   const c = 2 * Math.PI * ring.r;
                   return (
@@ -266,7 +291,7 @@ export default function PortfolioPortal() {
               {/* Rotating image wedges (visible through the top half only) */}
               <g clipPath="url(#pf-top)">
                 <g className="pf-ring pf-photos">
-                  {wedges.map((w) => (
+                  {wedges.map((w: Wedge) => (
                     <a
                       key={w.i}
                       href={href}

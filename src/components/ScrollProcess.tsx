@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { navigate } from "../router";
 
 // eframe-46.webp doesn't exist in /public/esyframes, so skip it
-const FRAME_IDS = Array.from({ length: 161 }, (_, i) => i + 1).filter(
+const FRAME_IDS: number[] = Array.from({ length: 161 }, (_, i) => i + 1).filter(
   (n) => n !== 46,
 );
-const FRAME_COUNT = FRAME_IDS.length;
+const FRAME_COUNT: number = FRAME_IDS.length;
 const frameSrc = (i: number) => `/esyframes/eframe-${FRAME_IDS[i]}.webp`;
 
 export default function ScrollProcess() {

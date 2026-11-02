@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { OPEN_EVENT, applyPrefs, getPrefs, savePrefs } from "../lib/cookies";
-import type { CookiePrefs } from "../lib/cookies";
+import type { CookiePrefs, StoredCookiePrefs } from "../lib/cookies";
 import { pageHref } from "../router";
 
 // Same class for every button on purpose: no option is more prominent.
@@ -48,7 +48,7 @@ export default function CookieBanner() {
   const [hasChoice, setHasChoice] = useState(false);
 
   useEffect(() => {
-    const saved = getPrefs();
+    const saved: StoredCookiePrefs | null = getPrefs();
     applyPrefs(saved); // load only what the visitor already agreed to
     if (saved) {
       setHasChoice(true);
@@ -57,7 +57,7 @@ export default function CookieBanner() {
       setOpen(true); // first visit
     }
     const onOpen = () => {
-      const p = getPrefs();
+      const p: StoredCookiePrefs | null = getPrefs();
       setDraft({ analytics: !!p?.analytics, ads: !!p?.ads });
       setHasChoice(!!p);
       setChoosing(true);

@@ -1,5 +1,12 @@
 import { type MouseEvent } from "react";
-import { ArrowUp, Mail, Phone, MapPin, ChevronRight } from "lucide-react";
+import {
+  ArrowUp,
+  Mail,
+  Phone,
+  MapPin,
+  ChevronRight,
+  type LucideIcon,
+} from "lucide-react";
 import { navigate, pageHref } from "../router";
 import type { Page } from "../router";
 import Reveal from "./Reveal";
@@ -7,7 +14,19 @@ import { useSiteSettings } from "../context/SiteSettingsContext";
 import oceanLogo from "../assets/logo.png";
 import { openCookieSettings } from "../lib/cookies";
 
-const FOOTER_LINKS: { label: string; page: Page }[] = [
+interface FooterLink {
+  label: string;
+  page: Page;
+}
+
+interface InfoItem {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  href?: string;
+}
+
+const FOOTER_LINKS: FooterLink[] = [
   { label: "Home", page: "home" },
   { label: "Process", page: "process" },
   { label: "Projects", page: "projects" },
@@ -111,7 +130,7 @@ export default function Footer() {
                 Navigate
               </h3>
               <ul className="mt-5 space-y-3">
-                {FOOTER_LINKS.map((link) => (
+                {FOOTER_LINKS.map((link: FooterLink) => (
                   <li key={link.label}>
                     <a
                       href={pageHref(link.page)}
@@ -136,7 +155,7 @@ export default function Footer() {
                 Contact
               </h3>
               <div className="mt-5 space-y-3">
-                {INFO.map((item) => {
+                {INFO.map((item: InfoItem) => {
                   const content = (
                     <>
                       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan">

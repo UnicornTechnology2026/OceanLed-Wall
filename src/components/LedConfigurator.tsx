@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type SubmitEvent } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import {
@@ -9,6 +8,7 @@ import {
   Cylinder,
   RotateCcw,
   Spline,
+  type LucideIcon,
 } from "lucide-react";
 import Reveal from "./Reveal";
 import { useSiteSettings } from "../context/SiteSettingsContext";
@@ -23,6 +23,18 @@ import type { ConsentChoices } from "../lib/consent";
 
 type ShapeKey = "rectangular" | "curved" | "corner" | "pillar";
 type ContentKey = "brand" | "bars" | "grid";
+
+interface ContentItem {
+  key: ContentKey;
+  label: string;
+}
+
+interface ShapeItem {
+  key: ShapeKey;
+  label: string;
+  hint: string;
+  icon: LucideIcon;
+}
 
 interface Config {
   shape: ShapeKey;
@@ -79,7 +91,7 @@ const SHAPES: {
   },
 ];
 
-const PITCHES = [1.5, 2.5, 3, 4, 6, 10];
+const PITCHES: number[] = [1.5, 2.5, 3, 4, 6, 10];
 
 const CONTENTS: { key: ContentKey; label: string }[] = [
   { key: "brand", label: "Brand" },
@@ -192,13 +204,13 @@ function stripGeometry(
   for (let i = 1; i < path.length; i++) {
     lengths.push(lengths[i - 1] + path[i].distanceTo(path[i - 1]));
   }
-  const total = lengths[lengths.length - 1];
+  const total: number = lengths[lengths.length - 1];
 
   const positions: number[] = [];
   const uvs: number[] = [];
   const indices: number[] = [];
 
-  path.forEach((p, i) => {
+  path.forEach((p: THREE.Vector2, i: number) => {
     const u = lengths[i] / total;
     positions.push(p.x, 0, p.y, p.x, height, p.y);
     uvs.push(u, 0, u, 1);
@@ -250,7 +262,7 @@ function makeTexture(c: Config, maxAnisotropy: number): THREE.CanvasTexture {
       ctx.fillStyle = "rgba(255,255,255,0.8)";
       ctx.fillText("Premium LED Display Solutions", W / 2, H * 0.62);
     } else if (c.content === "bars") {
-      const colors = [
+      const colors: string[] = [
         "#c8c8c8",
         "#c8c800",
         "#00c8c8",
@@ -259,12 +271,12 @@ function makeTexture(c: Config, maxAnisotropy: number): THREE.CanvasTexture {
         "#c80000",
         "#0000c8",
       ];
-      const barW = W / colors.length;
+      const barW: number = W / colors.length;
       colors.forEach((col, i) => {
         ctx.fillStyle = col;
         ctx.fillRect(i * barW, 0, barW + 1, H * 0.72);
       });
-      const g = ctx.createLinearGradient(0, 0, W, 0);
+      const g: CanvasGradient = ctx.createLinearGradient(0, 0, W, 0);
       g.addColorStop(0, "#000000");
       g.addColorStop(1, "#ffffff");
       ctx.fillStyle = g;
@@ -312,7 +324,8 @@ function makeTexture(c: Config, maxAnisotropy: number): THREE.CanvasTexture {
     }
   }
 
-  const texture = new THREE.CanvasTexture(canvas);
+  const texture: THREE.CanvasTexture<HTMLCanvasElement> =
+    new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = maxAnisotropy;
   return texture;
@@ -339,12 +352,12 @@ function buildScreen(c: Config, maxAnisotropy: number) {
     new THREE.LineBasicMaterial({ color: 0x7f9bbd }),
   );
 
-  const screen = new THREE.Group();
+  const screen: THREE.Group<THREE.Object3DEventMap> = new THREE.Group();
   screen.add(back, front, outline);
   screen.position.y = BOTTOM_OFFSET;
   group.add(screen);
 
-  const box = new THREE.Box3().setFromObject(screen);
+  const box: THREE.Box3 = new THREE.Box3().setFromObject(screen);
 
   if (c.person) {
     const person = new THREE.Mesh(
@@ -419,7 +432,11 @@ const TopEdge = () => (
   <div className="pointer-events-none absolute inset-x-10 top-0 z-10 h-px bg-linear-to-r from-transparent via-ocean-cyan/70 to-transparent" />
 );
 
-const STEPS = ["Pick a shape", "Set size & pixel pitch", "Request your quote"];
+const STEPS: string[] = [
+  "Pick a shape",
+  "Set size & pixel pitch",
+  "Request your quote",
+];
 
 /* ------------------------------------------------------------------ */
 /* Component                                                           */
@@ -580,7 +597,7 @@ export default function LedConfigurator() {
     return Object.keys(next).length === 0 && !ce;
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
     if (!validate()) {
@@ -589,9 +606,11 @@ export default function LedConfigurator() {
     }
 
     const shapeLabel =
-      SHAPES.find((s) => s.key === config.shape)?.label ?? config.shape;
+      SHAPES.find((s: ShapeItem) => s.key === config.shape)?.label ??
+      config.shape;
     const contentLabel =
-      CONTENTS.find((ct) => ct.key === config.content)?.label ?? config.content;
+      CONTENTS.find((ct: ContentItem) => ct.key === config.content)?.label ??
+      config.content;
     const hasOrientation =
       config.shape === "curved" || config.shape === "corner";
     const orientation = hasOrientation

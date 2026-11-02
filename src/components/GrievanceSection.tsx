@@ -1,19 +1,26 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import { type SubmitEvent } from "react";
 import { Mail, Phone, UserRound } from "lucide-react";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 
 /**
  * EDIT THESE: the Grievance Officer shown on the website.
  */
-const OFFICER = {
-  name: "Your Name",
+
+interface GrievanceOfficer {
+  name: string;
+  designation: string;
+  email: string;
+  phone: string;
+}
+const OFFICER: GrievanceOfficer = {
+  name: "Yogesh Thakre",
   designation: "Director",
   email: "oceanled2812@gmail.com",
   phone: "+91 90112 40214",
 };
 
-const TYPES = [
+const TYPES: { key: string; label: string }[] = [
   { key: "data", label: "My personal data / privacy (DPDP)" },
   { key: "order", label: "An order, product or service" },
 ] as const;
@@ -48,7 +55,7 @@ export default function GrievanceSection() {
   const [submitting, setSubmitting] = useState(false);
   const [ticket, setTicket] = useState("");
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
     if (!form.name.trim() || form.details.trim().length < 10) {

@@ -4,6 +4,11 @@ import { pageHref } from "../router";
 import GrievanceSection from "./GrievanceSection";
 import { openCookieSettings } from "../lib/cookies";
 
+interface Sharing {
+  who: string;
+  what: string;
+}
+
 /** Update this date every time the policy text below changes. */
 export const PRIVACY_LAST_UPDATED = "30 October 2026";
 
@@ -76,7 +81,7 @@ const DATA_ROWS: DataRow[] = [
   },
 ];
 
-const SHARING: { who: string; what: string }[] = [
+const SHARING: Sharing[] = [
   {
     who: "Courier and logistics partners",
     what: "Name, phone number and delivery address, to deliver and install your order.",
@@ -160,7 +165,7 @@ export default function PrivacyPolicy() {
               1. What we collect, why, for how long and who gets it
             </H2>
             <div className="space-y-3">
-              {DATA_ROWS.map((r) => (
+              {DATA_ROWS.map((r: DataRow) => (
                 <div
                   key={r.data}
                   className="rounded-xl border border-white/10 bg-white/3 p-4"
@@ -194,7 +199,7 @@ export default function PrivacyPolicy() {
           <section className="space-y-3">
             <H2 id="sharing">2. Who we share your data with</H2>
             <ul className="space-y-2">
-              {SHARING.map((s) => (
+              {SHARING.map((s: Sharing) => (
                 <li
                   key={s.who}
                   className="flex flex-col gap-0.5 rounded-xl border border-white/10 bg-white/3 px-4 py-3 sm:flex-row sm:gap-4"

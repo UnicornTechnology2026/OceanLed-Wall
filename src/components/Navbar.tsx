@@ -5,7 +5,12 @@ import { usePage, pageHref, navigate } from "../router";
 import type { Page } from "../router";
 import oceanLogo from "../assets/logo.png";
 
-const NAV_LINKS: { label: string; page: Page }[] = [
+type NavLink = {
+  label: string;
+  page: Page;
+};
+
+const NAV_LINKS: NavLink[] = [
   { label: "Home", page: "home" },
   { label: "Process", page: "process" },
   { label: "Projects", page: "projects" },
@@ -75,7 +80,7 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-1 lg:flex">
-          {NAV_LINKS.map((link) => {
+          {NAV_LINKS.map((link: NavLink) => {
             const active = page === link.page;
             return (
               <li key={link.label}>
@@ -142,7 +147,7 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
         <div className="overflow-hidden">
           <div className="max-h-[calc(100vh-4rem)] overflow-y-auto px-4 pb-5 pt-2 sm:px-6">
             <div className="rounded-2xl border border-white/10 bg-linear-to-b from-[#0a1220] to-[#060b14] p-2.5">
-              {NAV_LINKS.map((link, i) => {
+              {NAV_LINKS.map((link: NavLink) => {
                 const active = page === link.page;
                 return (
                   <a
@@ -156,15 +161,6 @@ export default function Navbar({ onOpenAdmin }: { onOpenAdmin: () => void }) {
                         : "border-transparent text-white/75 hover:bg-white/4"
                     }`}
                   >
-                    <span
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold ${
-                        active
-                          ? "border-ocean-cyan bg-ocean-cyan text-black"
-                          : "border-ocean-cyan/30 bg-ocean-dark text-ocean-cyan"
-                      }`}
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
                     <span className="flex-1 text-sm font-semibold uppercase tracking-wider">
                       {link.label}
                     </span>

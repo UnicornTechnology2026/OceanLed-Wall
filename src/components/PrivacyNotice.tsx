@@ -1,6 +1,5 @@
 import { pageHref } from "../router";
 
-/** Short consent line with a link to the Privacy Policy – place under every form. */
 export default function PrivacyNotice({
   className = "",
 }: {
